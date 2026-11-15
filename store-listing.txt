@@ -1,0 +1,55 @@
+GRIM TALLY: LIFE COUNTER – Google Play listing text
+=====================================================
+
+APP NAME (max 30 characters)
+Grim Tally: Life Counter
+
+SHORT DESCRIPTION (max 80 characters)
+A pixel-art life counter for Commander, with 10 animated themes.
+
+FULL DESCRIPTION (max 4,000 characters)
+Grim Tally is a life counter built for real card game tables: easy to read from across the table, quick to tap, and full of pixel-art charm.
+
+TRACK EVERYTHING
+• 1–8 players, with each seat rotated to face its player
+• Tap for ±1, hold for ±10
+• Commander damage from every opponent, including partner commanders
+• Poison, energy, experience, rad, speed and commander tax
+• Monarch, initiative, and day/night
+• Two-Headed Giant mode with shared team life
+
+RUN THE GAME
+• Turn tracker with a turn timer and round count
+• Undo for any slip of the finger
+• Random first player, d20, coin flip and planar die
+• Card lookup on Scryfall
+• Life history for every player
+
+10 ANIMATED THEMES
+Fantasy, Space, Ocean, Haunted, Volcano, Forest, Arcane, Frost, Desert and Oil & Porcelain. Each theme has its own colors, banners, background animation and death effect: twinkling stars, rising bubbles, drifting fog, glowing embers and more.
+
+EPIC DEATHS & VICTORIES
+When a player falls, the Reaper arrives with a death message. Revive them in one tap, or let the last one standing claim the crown.
+
+MAKE IT YOURS
+• Pick backgrounds by mana color, any color, or your own photo
+• Add deck names and save player profiles for next game
+• Game history and win stats for your playgroup
+• Plain-numbers option for easy reading
+
+PRIVATE AND OFFLINE
+No account, no ads, no tracking. Everything is saved on your device, and the app works without internet.
+
+Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.
+
+-----------------------------------------------------
+CATEGORY:  App › Tools  (or Game › Card)
+CONTACT EMAIL: [your email]
+PRIVACY POLICY URL: https://YOURUSERNAME.github.io/privacy.html
+CONTENT RATING: answer "no" to violence, sexual content, gambling, etc. The reaper and skull sprites are cartoon fantasy.
+DATA SAFETY: no data collected, no data shared.
+
+GRAPHICS IN THIS FOLDER
+• play-icon-512.png ............ App icon (512 × 512)
+• feature-graphic-1024x500.png . Feature graphic (1024 × 500)
+• screenshot-1..5.png .......... Phone screenshots (1080 × 1920)
