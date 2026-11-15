@@ -17,8 +17,8 @@ A computer makes Part 1 much easier than a phone.
    - Name it exactly **`YOURUSERNAME.github.io`**, using your own GitHub username. This name matters: Android needs the app to sit at the top of the web address.
    - Set it to **Public**, then click **Create repository**.
 3. On the new repository page, click **uploading an existing file**.
-4. Unzip this package, then drag **everything inside the folder** into the upload box, including:
-   - the `.well-known` folder and the `.nojekyll` file. These are hidden files. To see them, press **Cmd + Shift + .** on a Mac. On Windows, turn on **View → Show → Hidden items** in File Explorer.
+4. Unzip this package, then drag **all the files** into the upload box. All the files are at the top level, so there are no folders to upload, apart from the `.well-known` folder handled in Part 2.
+   - Include the hidden `.nojekyll` file. To see it, press **Cmd + Shift + .** on a Mac. On Windows, turn on **View → Show → Hidden items** in File Explorer.
 5. Click **Commit changes**.
 6. Go to **Settings → Pages**. Under "Build and deployment", choose **Deploy from a branch**, branch **main**, folder **/ (root)**, then click **Save**.
 7. After a minute or two, your app is live at **https://YOURUSERNAME.github.io**.
@@ -47,7 +47,7 @@ A computer makes Part 1 much easier than a phone.
    - an **`.apk`** file, for installing on your own phone to test
    - **`signing.keystore`** and **`signing-key-info.txt`**. ⚠️ **Back these up somewhere safe**, like a USB drive or cloud storage. Without them you can never update the app on Google Play.
    - an **`assetlinks.json`**
-4. In your GitHub repository, open the `.well-known` folder and replace `assetlinks.json` with the one from PWABuilder's zip. This proves the app and the website belong together, so the app opens without a browser address bar.
+4. In your GitHub repository, click **Add file → Create new file**. For the name, type `.well-known/assetlinks.json` (typing the slash creates the folder). Open the `assetlinks.json` from PWABuilder's zip in a text editor, copy everything, paste it in, and click **Commit changes**. This proves the app and the website belong together, so the app opens without a browser address bar.
 5. **Test:** copy the `.apk` to your Android phone and open it. Allow "install unknown apps" if asked, and tap **Install anyway** if Android warns about an unverified developer.
 
 ---
@@ -57,7 +57,7 @@ A computer makes Part 1 much easier than a phone.
 1. Go to **play.google.com/console** and sign up for a **personal** developer account. It costs **$25 one time**, and Google will verify your ID.
 2. Click **Create app**: name **Grim Tally: Life Counter**, **App**, **Free**.
 3. **Store listing.** You'll need:
-   - the app icon, which is `icons/icon-512.png`
+   - the app icon, `play-icon-512.png` from the store-assets zip
    - a **feature graphic**, 1024 × 500
    - **at least 2 phone screenshots**
    - a short and a full description
@@ -80,7 +80,7 @@ A computer makes Part 1 much easier than a phone.
 ---
 
 ## Updating the app later
-- **Website / installed web app:** upload the changed files to GitHub. Also change `CACHE='gt-v1'` in `sw.js` to `gt-v2` (then `v3`, and so on) so phones pick up the new version.
+- **Website / installed web app:** upload the changed files to GitHub. Also change `CACHE='gt-v2'` in `sw.js` to `gt-v3` (then `v3`, and so on) so phones pick up the new version.
 - **Play Store app:** most changes come through the website automatically, because the Android app loads it. Only rebuild with PWABuilder, using the **same signing key**, if you change the name, icon or package settings.
 
 ## Apple's App Store
