@@ -412,7 +412,8 @@ body.theme-volcano .ribbon{filter:drop-shadow(0 0 4px rgba(255,90,30,.6)) drop-s
 .hsec p{font-size:14px;line-height:1.4;color:var(--text);margin-top:3px}
 #howBtn{padding:10px;font-size:15px}
 #phost{position:fixed;inset:0;z-index:15;background:rgba(0,0,0,.55)}
-.pwrap{position:absolute;left:50%;top:50%;container-type:size}
+.pwrap{position:absolute;left:50%;top:50%;container-type:size;width:100vw;height:100vh;height:100dvh}
+.pwrap.side{width:100vh;width:100dvh;height:100vw;height:100dvw}
 .pwrap>.panel{position:absolute;inset:0;font-size:15px;font-size:clamp(15px,4.4cqmin,19px)}
 body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums .xc b,body.plainnums .chip,body.plainnums .pval,body.plainnums .stepper b{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif!important;font-weight:800;letter-spacing:0}
@@ -967,8 +968,7 @@ function panelOf(i){
 }
 function layoutHost(){
   const wrap=document.querySelector('#phost .pwrap'),rot=+(wrap.dataset.rot||0),side=rot===90||rot===270;
-  const W=Math.max(innerWidth,document.documentElement.clientWidth||0),H=Math.max(innerHeight,document.documentElement.clientHeight||0);
-  wrap.style.width=(side?H:W)+'px';wrap.style.height=(side?W:H)+'px';
+  wrap.classList.toggle('side',side);wrap.style.width='';wrap.style.height='';
   wrap.style.transform=`translate(-50%,-50%) rotate(${rot}deg)`;
 }
 function syncPanelState(){
