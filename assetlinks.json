@@ -1,14 +1,8 @@
-[
-  {
-    "relation": [
-      "delegate_permission/common.handle_all_urls"
-    ],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.dandeco.grimtally",
-      "sha256_cert_fingerprints": [
-        "REPLACE_WITH_THE_FINGERPRINT_FROM_PWABUILDER"
-      ]
-    }
-  }
-]
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.terminusvitas.twa",
+        "sha256_cert_fingerprints": ["3E:F3:3C:B2:67:E1:DA:4E:FC:D6:71:04:93:32:91:48:F1:EB:E2:E4:72:F4:47:73:4F:C3:E3:0B:DB:14:01:72"]
+      }
+    }]
