@@ -411,8 +411,9 @@ body.theme-volcano .ribbon{filter:drop-shadow(0 0 4px rgba(255,90,30,.6)) drop-s
 .hsec b .px{width:18px;height:18px}
 .hsec p{font-size:14px;line-height:1.4;color:var(--text);margin-top:3px}
 #howBtn{padding:10px;font-size:15px}
-#phost{position:fixed;inset:0;z-index:15;background:rgba(0,0,0,.55)}
-.pwrap{position:fixed;left:0;top:0;container-type:size;transform-origin:50% 50%}
+.pcell{position:relative;z-index:15;display:none;overflow:hidden;border-radius:14px;background:rgba(0,0,0,.55)}
+.pcell.on{display:block}
+.pwrap{position:absolute;left:50%;top:50%;container-type:size}
 .pwrap>.panel{position:absolute;inset:0;font-size:15px;font-size:clamp(15px,4.4cqmin,19px)}
 body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums .xc b,body.plainnums .chip,body.plainnums .pval,body.plainnums .stepper b{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif!important;font-weight:800;letter-spacing:0}
@@ -423,7 +424,6 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 </head>
 <body>
 <div id="board"></div>
-<div id="phost" class="hidden"><div class="pwrap"></div></div>
 <button id="menuBtn" aria-label="Settings"><i data-icon="medallion"></i></button>
 <button id="undoBtn" class="qbtn off" aria-label="Undo"><i data-icon="undo"></i></button>
 <button id="turnBtn" class="qbtn" aria-label="Pass turn"><i data-icon="hourglass"></i><span class="qnum"></span></button>
@@ -493,7 +493,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 6</div>
+    <div class="note fcp">Grim Tally · version 7</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -742,7 +742,6 @@ function render(){
   board.style.gridTemplateColumns=`repeat(${cols},1fr)`;
   board.style.gridTemplateRows=`repeat(${rows},1fr)`;
   board.innerHTML='';document.body.classList.remove('panelopen');
-  document.querySelector('#phost .pwrap').innerHTML='';document.getElementById('phost').classList.add('hidden');
   P.forEach(pl=>{
     const i=pl.i,p=S.players[i];
     const t=document.createElement('div');
@@ -960,34 +959,39 @@ function lifeLogHtml(p){
   if(!L.length)return '<div class="note">No life changes yet.</div>';
   return '<div class="loglist">'+L.map(e=>`<span class="logi ${e.d<0?'neg':'pos'}"><b>${e.d>0?'+'+e.d:'−'+(-e.d)}</b> → ${e.life}</span>`).join('')+'</div>';
 }
-// Player menus open full screen, rotated to face that player's seat
+// Player menus open full screen, rotated to face that player's seat.
+// The menu lives in a cell that spans the whole board grid and is turned exactly the way the
+// player areas are (the same method that already lays out every seat correctly).
+function pcell(){
+  let c=board.querySelector('.pcell');
+  if(!c){c=document.createElement('div');c.className='pcell';c.innerHTML='<div class="pwrap"></div>';board.appendChild(c)}
+  c.style.gridRow='1 / -1';c.style.gridColumn='1 / -1';
+  return c;
+}
 function panelOf(i){
-  const w=document.querySelector('#phost .pwrap>.panel');
+  const c=board.querySelector('.pcell'),w=c&&c.querySelector('.pwrap>.panel');
   if(w&&+w.dataset.i===i)return w;
   const t=tileEl(i);return t?t.querySelector('.panel'):null;
 }
 function layoutHost(){
-  const wrap=document.querySelector('#phost .pwrap'),rot=+(wrap.dataset.rot||0),side=rot===90||rot===270;
-  // Size and place the menu from the board's own on-screen box (the same box the player areas use),
-  // with explicit pixel edges, so the turned menu always covers the whole screen.
-  const r=board.getBoundingClientRect(),W=r.width||innerWidth,H=r.height||innerHeight;
-  const w=side?H:W,h=side?W:H;
-  wrap.style.width=w+'px';wrap.style.height=h+'px';
-  wrap.style.left=(r.left+(W-w)/2)+'px';wrap.style.top=(r.top+(H-h)/2)+'px';
-  wrap.style.transform=`rotate(${rot}deg)`;
+  const c=board.querySelector('.pcell');if(!c||!c.classList.contains('on'))return;
+  const wrap=c.firstElementChild,rot=+(wrap.dataset.rot||0),side=rot===90||rot===270,w=c.clientWidth,h=c.clientHeight;
+  wrap.style.width=(side?h:w)+'px';wrap.style.height=(side?w:h)+'px';
+  wrap.style.transform=`translate(-50%,-50%) rotate(${rot}deg)`;
 }
 function syncPanelState(){
-  const host=document.getElementById('phost'),wrap=host.firstElementChild;
+  const c=pcell(),wrap=c.firstElementChild;
   const home=pn=>{const t=tileEl(+pn.dataset.i);if(t)t.querySelector('.inner').appendChild(pn);else pn.remove()};
   wrap.querySelectorAll('.panel.hidden').forEach(home);
-  const open=board.querySelector('.panel:not(.hidden)');
+  const open=board.querySelector('.tile .panel:not(.hidden)');
   if(open){
     wrap.querySelectorAll('.panel').forEach(o=>{o.classList.add('hidden');home(o)});
     wrap.dataset.rot=open.closest('.tile').dataset.rot;
-    wrap.appendChild(open);layoutHost();requestAnimationFrame(layoutHost);setTimeout(layoutHost,300);
+    wrap.appendChild(open);
   }
   const any=!!wrap.querySelector('.panel:not(.hidden)');
-  host.classList.toggle('hidden',!any);
+  c.classList.toggle('on',any);
+  if(any){layoutHost();requestAnimationFrame(layoutHost);setTimeout(layoutHost,300)}
   document.body.classList.toggle('panelopen',any);
 }
 function openPanel(i){
@@ -1376,7 +1380,6 @@ document.getElementById('howBtn').addEventListener('click',e=>{
   const h=document.getElementById('howTo'),open=h.classList.toggle('hidden')===false;
   e.currentTarget.textContent=open?'▴ Hide how to use':'▾ How to use';
 });
-document.getElementById('phost').addEventListener('click',e=>{if(e.target.id==='phost'){document.querySelectorAll('#phost .panel').forEach(pn=>pn.classList.add('hidden'));syncPanelState()}});
 (function(){
   let play=/[?&]store=play\b/.test(location.search);
   try{if(play)localStorage.setItem('mtglife-store','play');else play=localStorage.getItem('mtglife-store')==='play'}catch(e){}
