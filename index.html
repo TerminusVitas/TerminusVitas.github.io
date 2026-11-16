@@ -483,6 +483,15 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 .lcard svg{width:100%;max-width:118px;height:auto}
 .lcard.on{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent),0 0 12px rgba(255,210,63,.25);color:var(--accent)}
 .lcard:active{transform:translateY(2px)}
+@container (min-aspect-ratio: 2.3/1){
+  .tile .inner .banner{left:3%;top:7%;transform:none;max-width:52%}
+  .tile .inner .deckname{left:4%;transform:none;top:calc(7% + max(16px,6.5cqmin)*2.2)}
+  .tile .inner .center{position:absolute;right:5%;top:4%;flex-direction:row-reverse;align-items:center;gap:.4em}
+  .tile .inner .life{font-size:46cqh}
+  .tile .inner .delta{height:auto;font-size:16cqh}
+  .tile.hascmd .inner .life{font-size:32cqh}
+  .tile.hascmd .inner .center{transform:none}
+}
 </style>
 </head>
 <body>
@@ -569,7 +578,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 12</div>
+    <div class="note fcp">Grim Tally · version 13</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -887,51 +896,48 @@ function render(){
   save();
 }
 
+// Place the menu medallion and quick buttons where they cover nothing you need to tap or read.
+// Every seat's buttons, damage bars, name banner and badges are treated as obstacles; we try spots along
+// the edges between seats and pick the clear one closest to the middle of the table.
+let placeQ=0;function schedulePlace(){if(placeQ)return;placeQ=requestAnimationFrame(()=>{placeQ=0;placeMenu()})}
 function placeMenu(){
   const tiles=[...board.querySelectorAll('.tile')];if(!tiles.length)return;
   const rs=tiles.map(t=>t.getBoundingClientRect());
   const L=Math.min(...rs.map(q=>q.left)),R=Math.max(...rs.map(q=>q.right));
   const T=Math.min(...rs.map(q=>q.top)),B=Math.max(...rs.map(q=>q.bottom));
-  const cx=(L+R)/2,cy=(T+B)/2,full=q=>q.width>(R-L)*.75,off=44;
-  const btn=document.getElementById('menuBtn');
-  // Horizontal seams between rows; note whether a full-width tile (whose name banner sits on the seam) touches it
-  const tops=[...new Set(rs.filter(q=>q.top>T+1).map(q=>Math.round(q.top)))];
-  const seams=tops.map(top=>{
-    const above=rs.filter(q=>q.bottom<=top+1),below=rs.filter(q=>Math.abs(q.top-top)<2);
-    const ab=Math.max(...above.map(q=>q.bottom));
-    return{y:(ab+top)/2,fa:above.some(q=>Math.abs(q.bottom-ab)<2&&full(q)),fb:below.some(full)};
+  const cx=(L+R)/2,cy=(T+B)/2;
+  const obs=[];
+  board.querySelectorAll('.tile .chiprow,.tile .cmdrow,.tile .banner,.tile .xcounters,.tile .nolose,.tile .deckname,.tile .life').forEach(e=>{
+    const q=e.getBoundingClientRect();if(q.width>1&&q.height>1&&getComputedStyle(e).display!=='none')obs.push(q)});
+  // candidate centers: points along every seat's edges
+  const cand=[];
+  rs.forEach(q=>{
+    for(let x=q.left;x<=q.right;x+=6){cand.push([x,q.top-2]);cand.push([x,q.bottom+2])}
+    for(let y=q.top;y<=q.bottom;y+=6){cand.push([q.left-2,y]);cand.push([q.right+2,y])}
+    // open space inside the seat too (beside the life total), for layouts where every edge is busy
+    for(let x=q.left+24;x<=q.right-24;x+=10)for(let y=q.top+24;y<=q.bottom-24;y+=10)cand.push([x,y]);
   });
-  let x=cx,y;
-  if(!seams.length){x=R-off;y=T+off}
-  else{
-    const clean=seams.filter(z=>!z.fa&&!z.fb),pool=clean.length?clean:seams;
-    const z=pool.reduce((a,b)=>Math.abs(b.y-cy)<Math.abs(a.y-cy)?b:a);
-    y=z.y;
-    if(z.fa&&z.fb)x=L+off;        // e.g. 2 players: slide off the banners to the side
-    else if(z.fa)y+=off;          // full-width tile above: drop into the column seam below
-    else if(z.fb)y-=off;          // full-width tile below: lift into the column seam above
-  }
-  const g=56;let pos=null,dn=null;
-  // Two sides: name banners line the middle seam, so sit on a gap between seats and stack the buttons upward
-  if(S.layout==='sides'&&S.count>2&&seams.length){
-    const z=seams[0],topR=rs.filter(q=>q.bottom<=z.y+1),botR=rs.filter(q=>q.top>=z.y-1);
-    const tb=topR.map(q=>q.right).filter(v=>v<R-2),bb=botR.map(q=>q.right).filter(v=>v<R-2);
-    const near=a=>a.reduce((m,v)=>Math.abs(v-cx)<Math.abs(m-cx)?v:m,a[0]);
-    const common=tb.filter(v=>bb.some(w=>Math.abs(v-w)<4));
-    if(common.length){x=near(common)+2;y=z.y}else{x=near(tb)+2;y=z.y-off}
-    pos=[[x,y-g],[x,y-2*g]];dn=common.length?[x,y+g]:[x,y-3*g];
-  }else if(seams.length&&!seams.filter(z=>!z.fa&&!z.fb).length&&seams.some(z=>z.fa&&z.fb)){
-    // full-width rows (2 players, Stacked): medallion at the left end of the seam, buttons at the right end
-    pos=[[R-off-g,y],[R-off,y]];
-  }
-  btn.style.left=x+'px';btn.style.top=y+'px';
-  if(!pos){const room=x-g-24>L,roomR=x+g+24<R;
-    pos=roomR&&room?[[x-g,y],[x+g,y]]:room?[[x-g,y],[x-2*g,y]]:[[x+g,y],[x+2*g,y]];}
+  const hit=(x,y,r,list)=>{let a=0;list.forEach(q=>{const w=Math.min(x+r,q.right)-Math.max(x-r,q.left),h=Math.min(y+r,q.bottom)-Math.max(y-r,q.top);if(w>0&&h>0)a+=w*h});return a};
+  const inside=(x,y,r)=>x-r>=L-3&&x+r<=R+3&&y-r>=T-3&&y+r<=B+3;
+  const pick=(r,taken,ax,ay,wd)=>{
+    let best=null,bs=Infinity;
+    cand.forEach(([x,y])=>{
+      if(!inside(x,y,r))return;
+      if(taken.some(([tx,ty,tr])=>Math.hypot(x-tx,y-ty)<r+tr+4))return;
+      const onEdge=rs.some(q=>Math.abs(x-q.left+2)<1||Math.abs(x-q.right-2)<1||Math.abs(y-q.top+2)<1||Math.abs(y-q.bottom-2)<1);
+      const sc=hit(x,y,r,obs)*20+Math.hypot(x-ax,y-ay)*wd+(onEdge?0:60);
+      if(sc<bs){bs=sc;best=[x,y]}
+    });
+    return best||[ax,ay];
+  };
+  const MR=31,BR=23,taken=[];
+  const [mx,my]=pick(MR,taken,cx,cy,.6);taken.push([mx,my,MR]);
+  const btn=document.getElementById('menuBtn');btn.style.left=mx+'px';btn.style.top=my+'px';
   const put=(id,[px,py])=>{const e=document.getElementById(id);if(e){e.style.left=px+'px';e.style.top=py+'px'}};
   const vis=[S.showUndo&&'undoBtn',S.showTurn&&'turnBtn'].filter(Boolean);
   ['undoBtn','turnBtn'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.toggle('hidden',!vis.includes(id))});
-  vis.forEach((id,k)=>put(id,pos[k]));
-  put('dnBtn',dn||[x,y+g+4<B?y+g+4:y-g-4]);
+  vis.forEach(id=>{const pt=pick(BR,taken,mx,my,3);taken.push([pt[0],pt[1],BR]);put(id,pt)});
+  if(S.dayNight!=='off'){const pt=pick(BR,taken,mx,my,3);taken.push([pt[0],pt[1],BR]);put('dnBtn',pt)}
 }
 function layoutInner(){
   board.querySelectorAll('.tile').forEach(t=>{
@@ -975,6 +981,7 @@ function updateTile(i){
   t.classList.toggle('dead',!!p.dead);
   t.classList.toggle('nolife',!!p.noLifeLoss);
   t.classList.toggle('active',S.turn===i);
+  schedulePlace();
   t.querySelector('.deckname').textContent=p.deck||'';
   let xc='';
   if(S.turn===i)xc+=`<span class="xc tclock">${ICON.hourglass}<b>${fmtClock(Date.now()-S.turnStart)}</b></span>`;
