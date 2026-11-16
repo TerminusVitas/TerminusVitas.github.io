@@ -1,7 +1,7 @@
 // Grim Tally offline cache
 // Pages and code: always try the network first (so updates show up right away), fall back to the saved copy offline.
 // Images and fonts: use the saved copy, refresh it in the background.
-const CACHE='gt-v17';
+const CACHE='gt-v19';
 const SHELL=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','maskable-512.png','privacy.html'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL.map(u=>new Request(u,{cache:'reload'})))).then(()=>self.skipWaiting()));

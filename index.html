@@ -86,7 +86,11 @@ button{font-family:inherit;cursor:pointer}
 .bub{position:absolute;bottom:-10%;width:calc(6cqmin*var(--s,1));height:calc(6cqmin*var(--s,1));z-index:2;pointer-events:none;opacity:0;animation:bubUp 2.7s ease-in infinite}
 .bub .px{width:100%;height:100%;display:block}
 @keyframes bubUp{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}50%{transform:translate(1.5cqmin,-18cqmin)}100%{transform:translate(-1cqmin,-38cqmin);opacity:0}}
-.fate.death .big{animation:popIn .6s .45s both,bob 2.4s 1.1s ease-in-out infinite}
+.fate.death .big{animation:bob 2.4s calc(var(--rd,.45s) + .7s) ease-in-out infinite}
+.fate.death .big>.px{animation:popIn .6s var(--rd,.45s) both}
+.fate.death .fmsg{animation-delay:calc(var(--rd,.45s) + .45s)}
+.fate.death .fhint{animation-delay:calc(var(--rd,.45s) + .95s)}
+.fate.death.settled .big>.px{animation:none}
 .fate.victory .big{animation:popIn .6s .1s both,shine 1.6s .8s ease-in-out infinite}
 .fmsg{font-family:var(--font);font-weight:900;color:var(--text);text-shadow:2px 2px 0 #000;font-size:16px;font-size:max(16px,6.5cqmin);max-width:90%;line-height:1.2;animation:fadeIn .6s .9s both}
 .fate.victory .fmsg{color:#ffe27a;animation-delay:.5s}
@@ -668,7 +672,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 17</div>
+    <div class="note fcp">Grim Tally · version 19</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -841,7 +845,9 @@ function ribbon(inner,cls,asLabel){
 const MANA_ICON={};for(const c in MANA_SYM)MANA_ICON[c]=manaIcon(c);
 ICON.sun=pixelSvg(MANA_SYM.W.map(r=>r.replace(/#/g,'y')),{y:'#ffd23f'});
 
-const COLORS=['#9b2f2a','#2560a0','#2f7d43','#7a45a3','#a37a1f','#1f7f80','#a33a70','#55555f'];
+// each theme has its own set of 8 distinct default seat colors
+const THEME_COLORS={"fantasy":["#9b2f2a","#2560a0","#2f7d43","#7a45a3","#a37a1f","#1f7f80","#a33a70","#55555f"],"space":["#2b4fa8","#6a2fa8","#1f8a9a","#a8326e","#3a7a3a","#b0582a","#4a5a8a","#8a2a3a"],"ocean":["#1f5f8a","#1f8a7a","#c08a2a","#3a6a4a","#b0603a","#6a4a9a","#a83a5a","#5a6a7a"],"haunted":["#5a2a7a","#7a1f2a","#2f5f4a","#a8541f","#3a4a6a","#6a6a7a","#8a3a6a","#4a6a2a"],"volcano":["#a82a1a","#c0561a","#8a6a1a","#5a2a1a","#7a1a3a","#4a4a52","#2a5a6a","#6a3a7a"],"forest":["#2f6a2f","#6a8a2a","#7a4a1f","#a8761f","#8a2f2a","#2a6a6a","#5a3a6a","#a85a7a"],"arcane":["#4a2a9a","#8a2aa8","#1f7a9a","#a82a6a","#2a8a6a","#a8822a","#5f60a8","#9a3a2a"],"frost":["#2a6a9a","#3a9aaa","#5a5a9a","#2a7a7a","#7a4a8a","#2f7a4a","#6a7a8a","#8a3a5a"],"desert":["#a8641f","#8a2a1a","#1f6a8a","#a8882a","#2a7a6a","#6a3a2a","#7a2a5a","#5a6a3a"],"phyrexian":["#8a1a1a","#3a3a42","#7a8a8a","#4f7a22","#6a1a4a","#8a5a2a","#2a4a5a","#a88a5a"]};
+let COLORS=THEME_COLORS.fantasy.slice();
 const board=document.getElementById('board');
 const modal=document.getElementById('modal');
 let S=null;
@@ -1614,6 +1620,8 @@ function renderFate(i){
   const settled=(mode==='death'&&(!p._fresh||p._confirm))||(mode==='victory'&&!S._freshWin);
   f.className='fate'+(mode?' '+mode:' hidden')+(settled?' settled':'')+(mode==='death'&&S.theme==='phyrexian'&&!p._confirm&&p.poison>=poisonLimit()?' compleated':'');
   f.innerHTML=html;
+  // the reaper waits until the theme's death animation has played out
+  f.style.setProperty('--rd',(mode==='death'?({fantasy:1.9,space:1.25,ocean:2.8,haunted:2.1,volcano:1.5,forest:1.6,arcane:1.6,frost:1.1,desert:2.1,phyrexian:2.2}[S.theme||'fantasy']||.45):.45)+'s');
   if(mode==='death')p._fresh=false;
   if(mode==='victory')S._freshWin=false;
   f.onclick=e=>{
@@ -1884,6 +1892,11 @@ function applyTheme(name,rerender){
   if(!THEMES[name])name='fantasy';
   S.theme=name;const T=THEMES[name];
   Object.keys(THEMES).forEach(k=>document.body.classList.toggle('theme-'+k,k===name&&k!=='fantasy'));
+  // swap default seat colors to the new theme's set; colors players picked themselves stay
+  const newCols=THEME_COLORS[name]||THEME_COLORS.fantasy;
+  (S.players||[]).forEach(p=>{const c=p.colors||[p.color];if(c.length!==1)return;
+    for(const set of Object.values(THEME_COLORS)){const k=set.indexOf(c[0]);if(k>=0){p.colors=[newCols[k]];break}}});
+  COLORS=newCols.slice();
   makeTails(T.tail,T.tailRows);
   ICON.medallion=medallion(T.med);
   document.getElementById('menuBtn').innerHTML=ICON.medallion;
