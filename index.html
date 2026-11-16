@@ -559,6 +559,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 .walker i{position:absolute;inset:0}
 .walker .fb{animation:legs .6s steps(1) infinite}.walker .fa{animation:legs .6s steps(1) -.3s infinite}
 .princess{height:15cqmin;width:11cqmin}
+.knight{width:14cqmin;height:16cqmin}
 .snake{position:absolute;left:0;width:27cqmin;height:10.5cqmin;opacity:.9;animation:crawl var(--d) linear infinite}
 .snake i{position:absolute;inset:0}
 .snake .fb{animation:legs .5s steps(1) infinite}.snake .fa{animation:legs .5s steps(1) -.25s infinite}
@@ -677,7 +678,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 21</div>
+    <div class="note fcp">Grim Tally · version 22</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -763,8 +764,8 @@ ICON.squirrelA=squirrel(0);ICON.squirrelB=squirrel(1);
 const WIZ=[".....k......","....kbk....g","....kbbk...n","...kbybk...n","...kbbbbk..n",".kkkkkkkkk.n","...kssek...n","...kwwwk...n","..kbwwwbkkhn","..kbbwbbk..n","..kbbbbbk..n",".kbbbbbbbk.n",".kbbbbbbbk.n",".kkkkkkkkk.n","..kk..kk...n","............"];
 const WIZP={k:'#140e22',b:'#3a5fd0',y:'#ffd23f',g:'#9fe8ff',n:'#8a5a2b',s:'#f0c8a0',e:'#140e22',w:'#f4f4f4',h:'#f0c8a0'};
 ICON.wizA=pixelSvg(WIZ,WIZP);
-const KN=['....rrr.....', '...kkkkk...w', '..kmmmmmk..w', '..kmkkkmk..w', '..kmmmmmk..w', '...kdddk...w', '.kkkmmmmkhhh', 'kSSSkmmmmkh.', 'kSySkmmmmmk.', 'kSSSkdmmmk..', '.kSkmmmmmk..', '..kkmmmmmk..', '...kmmkmmk..', '...kmk.kmk..', '...kkk.kkk..', '............'],KNP={k:'#1a1a22',m:'#b8c0cc',d:'#7a8290',r:'#c8302a',S:'#2a4a9a',y:'#ffd23f',w:'#e8eef4',h:'#8a5a2b'};
-ICON.knA=pixelSvg(KN,KNP);ICON.knB=pixelSvg(KN.map((r,i)=>i===13?"..kmk...kmk.":i===14?"..kkk...kkk.":r),KNP);
+const KN=['....rrrr........', '..rrRRRrr.......', '.rR..kkkkk..w...', 'R...kmlmmmk.kwk.', '....kmmmmmk.kwk.', '....kmdkkkk.kwk.', '....kmmmmdk.kwk.', '.....kdddk..kwk.', '...kkkbbbkk.kwk.', '..kmmkbybbmkkwk.', '.kBBBkyyybkmyyyk', '.kByBkbybbkmmhk.', '.kBBBkbybbkkkhk.', '..kBkkbbbBk.kk..', '...kkddmddk.....', '...kmmk.kmmk....', '...kmk...kmk....', '..kkkk..kkkk....'],KNB=['....rrrr........', '..rrRRRrr.......', '.rR..kkkkk..w...', 'R...kmlmmmk.kwk.', '....kmmmmmk.kwk.', '....kmdkkkk.kwk.', '....kmmmmdk.kwk.', '.....kdddk..kwk.', '...kkkbbbkk.kwk.', '..kmmkbybbmkkwk.', '.kBBBkyyybkmyyyk', '.kByBkbybbkmmhk.', '.kBBBkbybbkkkhk.', '..kBkkbbbBk.kk..', '...kkddmddk.....', '....kmmkmmk.....', '....kmk.kmk.....', '...kkkk.kkkk....'],KNP={k:'#15151c',m:'#c4ccd8',d:'#7d8796',l:'#f4f7fb',r:'#d8382e',R:'#8a1f1a',b:'#2f56b0',B:'#1f3a7a',y:'#ffd23f',h:'#6a4020',w:'#eef2f8'};
+ICON.knA=pixelSvg(KN,KNP);ICON.knB=pixelSvg(KNB,KNP);
 const PR=['....y.y.y...', '....yyyyy...', '...hhhhhhh..', '...hsssssh..', '...hsesesh..', '...hsssssh..', '...hhsssh...', '...kpppppk..', '..kspppppsk.', '...kpPpPpk..', '..kppppppk..', '..kpPpppPpk.', '.kppppppppk.', '.kpPppppPpk.', '.kkkkkkkkkk.', '..kk....kk..'],PRP={k:'#2a1420',p:'#e86aa8',P:'#b83a7a',y:'#ffd23f',h:'#f2c84a',s:'#f0c8a0',e:'#2a1420'};
 ICON.prA=pixelSvg(PR,PRP);ICON.prB=pixelSvg(PR.map((r,i)=>i===15?"...kk..kk...":r),PRP);
 function snakeSprite(ph,tongue){const W=18,H=7,g=[...Array(H)].map(()=>Array(W).fill('.'));
