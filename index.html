@@ -524,21 +524,21 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 .fish{position:absolute;left:0;width:calc(11cqmin*var(--s));height:calc(6cqmin*var(--s));opacity:.7;animation:swimL var(--d) linear infinite}
 .fish.rev{animation-name:swimR}
 .fish .px{animation:fishBob 1.6s ease-in-out infinite}
-@keyframes swimL{from{transform:translateX(115cqw)}to{transform:translateX(-25cqw)}}
-@keyframes swimR{from{transform:translateX(-25cqw) scaleX(-1)}to{transform:translateX(115cqw) scaleX(-1)}}
+@keyframes swimL{0%{transform:translateX(115cqw)}40%,100%{transform:translateX(-25cqw)}}
+@keyframes swimR{0%{transform:translateX(-25cqw) scaleX(-1)}40%,100%{transform:translateX(115cqw) scaleX(-1)}}
 @keyframes fishBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-18%)}}
 .sship{position:absolute;left:0;width:calc(19cqmin*var(--s));height:calc(7cqmin*var(--s));opacity:.85;animation:flyR var(--d) linear infinite}
 .sship.rev{animation-name:flyL}
 .sship .px{animation:engine .25s steps(2) infinite}
-@keyframes flyR{0%{transform:translateX(-30cqw)}35%,100%{transform:translateX(130cqw)}}
-@keyframes flyL{0%{transform:translateX(130cqw) scaleX(-1)}35%,100%{transform:translateX(-30cqw) scaleX(-1)}}
+@keyframes flyR{0%{transform:translateX(-30cqw)}18%,100%{transform:translateX(130cqw)}}
+@keyframes flyL{0%{transform:translateX(130cqw) scaleX(-1)}18%,100%{transform:translateX(-30cqw) scaleX(-1)}}
 @keyframes engine{from{filter:brightness(1)}to{filter:brightness(1.35)}}
 .scarab{position:absolute;left:0;width:13cqmin;height:10cqmin;opacity:.85;animation:crawl var(--d) linear infinite}
 .scarab i{position:absolute;inset:0}
 .scarab .fb{animation:legs .3s steps(1) infinite}
 .scarab .fa{animation:legs .3s steps(1) -.15s infinite}
 @keyframes legs{0%{opacity:1}50%{opacity:0}}
-@keyframes crawl{0%{transform:translate(-15cqw,0)}25%{transform:translate(25cqw,-2cqh)}50%{transform:translate(55cqw,1cqh)}75%{transform:translate(85cqw,-1cqh)}100%{transform:translate(118cqw,0)}}
+@keyframes crawl{0%{transform:translate(-15cqw,0)}11%{transform:translate(25cqw,-2cqh)}22%{transform:translate(55cqw,1cqh)}33%{transform:translate(85cqw,-1cqh)}44%,100%{transform:translate(118cqw,0)}}
 .ship{position:absolute;left:50%;top:14%;width:30cqmin;height:23cqmin;transform:translateX(-50%);animation:sink 2.8s ease-in .2s both}
 .ship .px{width:100%;height:100%;display:block}
 @keyframes sink{0%{transform:translate(-50%,0) rotate(0);opacity:1}18%{transform:translate(-50%,-4%) rotate(-7deg)}38%{transform:translate(-50%,6%) rotate(16deg)}100%{transform:translate(-50%,190%) rotate(38deg);opacity:0}}
@@ -548,19 +548,23 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 .spider .thread{position:absolute;left:50%;bottom:80%;width:1px;height:200cqh;background:rgba(230,225,245,.55)}
 .spider .sp{position:absolute;inset:0}
 .spider .sb{animation:legs .4s steps(1) infinite}.spider .sa{animation:legs .4s steps(1) -.2s infinite}
-@keyframes dangle{0%,100%{transform:translateY(0)}40%,60%{transform:translateY(var(--drop))}}
+@keyframes dangle{0%,45%,100%{transform:translateY(0)}15%,30%{transform:translateY(var(--drop))}}
 .squirrel{position:absolute;left:0;width:16cqmin;height:12.5cqmin;animation:scurry var(--d) linear infinite}
 .squirrel .hop{position:absolute;inset:0;animation:hop .5s ease-in-out infinite}
 .squirrel i{position:absolute;inset:0}
 .squirrel .fb{animation:legs .5s steps(1) infinite}.squirrel .fa{animation:legs .5s steps(1) -.25s infinite}
 @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-45%)}}
-@keyframes scurry{0%{transform:translateX(-20cqw)}40%{transform:translateX(45cqw)}55%{transform:translateX(45cqw)}100%{transform:translateX(120cqw)}}
-.wizard{position:absolute;left:0;width:12cqmin;height:16cqmin;animation:wander var(--d) linear infinite}
-.wizard i{position:absolute;inset:0}
-.wizard .fb{animation:legs .6s steps(1) infinite}.wizard .fa{animation:legs .6s steps(1) -.3s infinite}
+@keyframes scurry{0%{transform:translateX(-20cqw)}14%,22%{transform:translateX(45cqw)}36%,100%{transform:translateX(120cqw)}}
+.walker{position:absolute;left:0;width:12cqmin;height:16cqmin;animation:wander var(--d) linear infinite}
+.walker i{position:absolute;inset:0}
+.walker .fb{animation:legs .6s steps(1) infinite}.walker .fa{animation:legs .6s steps(1) -.3s infinite}
+.princess{height:15cqmin;width:11cqmin}
+.snake{position:absolute;left:0;width:27cqmin;height:10.5cqmin;opacity:.9;animation:crawl var(--d) linear infinite}
+.snake i{position:absolute;inset:0}
+.snake .fb{animation:legs .5s steps(1) infinite}.snake .fa{animation:legs .5s steps(1) -.25s infinite}
 .wizard .wspark{inset:auto;right:-35%;top:-30%;width:60%;height:45%;opacity:0;animation:wsp 3.2s ease-out infinite}
 @keyframes wsp{0%,70%{opacity:0;transform:scale(.3)}80%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.3) rotate(40deg)}}
-@keyframes wander{0%{transform:translateX(-15cqw)}45%{transform:translateX(50cqw)}55%{transform:translateX(50cqw)}100%{transform:translateX(118cqw)}}
+@keyframes wander{0%{transform:translateX(-15cqw)}18%,23%{transform:translateX(50cqw)}41%,100%{transform:translateX(118cqw)}}
 .tomb{position:absolute;right:108%;bottom:0;height:100%;width:52%}
 .tomb>div{position:absolute;inset:0}
 .tomb .px{width:100%;height:100%;display:block}
@@ -672,7 +676,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 19</div>
+    <div class="note fcp">Grim Tally · version 20</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -757,7 +761,19 @@ function squirrel(f){const rows=[];for(let y=0;y<11;y++){let row='';for(let x=0;
 ICON.squirrelA=squirrel(0);ICON.squirrelB=squirrel(1);
 const WIZ=[".....k......","....kbk....g","....kbbk...n","...kbybk...n","...kbbbbk..n",".kkkkkkkkk.n","...kssek...n","...kwwwk...n","..kbwwwbkkhn","..kbbwbbk..n","..kbbbbbk..n",".kbbbbbbbk.n",".kbbbbbbbk.n",".kkkkkkkkk.n","..kk..kk...n","............"];
 const WIZP={k:'#140e22',b:'#3a5fd0',y:'#ffd23f',g:'#9fe8ff',n:'#8a5a2b',s:'#f0c8a0',e:'#140e22',w:'#f4f4f4',h:'#f0c8a0'};
-ICON.wizA=pixelSvg(WIZ,WIZP);ICON.wizB=pixelSvg(WIZ.map((r,i)=>i===14?"...kk.kk...n":r),WIZP);
+ICON.wizA=pixelSvg(WIZ,WIZP);
+const KN=['....rrr.....', '...kkkkk...w', '..kmmmmmk..w', '..kmkkkmk..w', '..kmmmmmk..w', '...kdddk...w', '.kkkmmmmkhhh', 'kSSSkmmmmkh.', 'kSySkmmmmmk.', 'kSSSkdmmmk..', '.kSkmmmmmk..', '..kkmmmmmk..', '...kmmkmmk..', '...kmk.kmk..', '...kkk.kkk..', '............'],KNP={k:'#1a1a22',m:'#b8c0cc',d:'#7a8290',r:'#c8302a',S:'#2a4a9a',y:'#ffd23f',w:'#e8eef4',h:'#8a5a2b'};
+ICON.knA=pixelSvg(KN,KNP);ICON.knB=pixelSvg(KN.map((r,i)=>i===13?"..kmk...kmk.":i===14?"..kkk...kkk.":r),KNP);
+const PR=['....y.y.y...', '....yyyyy...', '...hhhhhhh..', '...hsssssh..', '...hsesesh..', '...hsssssh..', '...hhsssh...', '...kpppppk..', '..kspppppsk.', '...kpPpPpk..', '..kppppppk..', '..kpPpppPpk.', '.kppppppppk.', '.kpPppppPpk.', '.kkkkkkkkkk.', '..kk....kk..'],PRP={k:'#2a1420',p:'#e86aa8',P:'#b83a7a',y:'#ffd23f',h:'#f2c84a',s:'#f0c8a0',e:'#2a1420'};
+ICON.prA=pixelSvg(PR,PRP);ICON.prB=pixelSvg(PR.map((r,i)=>i===15?"...kk..kk...":r),PRP);
+function snakeSprite(ph,tongue){const W=18,H=7,g=[...Array(H)].map(()=>Array(W).fill('.'));
+  const yc=x=>3+Math.round(1.4*Math.sin(x*.75+ph));
+  for(let x=1;x<14;x++){const y=yc(x),c=x%3===0?'d':'g';g[y][x]=c;if(x>2&&y+1<H)g[y+1][x]=c}
+  const hy=Math.min(yc(13),H-2);for(let x=14;x<16;x++){g[hy][x]='g';g[hy+1][x]='g'}g[hy][15]='e';
+  if(tongue){g[hy+1][16]='t';g[hy+1][17]='t'}
+  const out=g.map((row,y)=>row.map((c,x)=>c!=='.'?c:[[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>g[y+b]&&'gde'.includes(g[y+b][x+a]||'.'))?'k':'.').join(''));
+  return pixelSvg(out,{g:'#d4ac48',d:'#8a5f1a',e:'#1a0d06',t:'#e8302a',k:'#3a2408'})}
+ICON.snakeA=snakeSprite(0,1);ICON.snakeB=snakeSprite(Math.PI,0);ICON.wizB=pixelSvg(WIZ.map((r,i)=>i===14?"...kk.kk...n":r),WIZP);
 ICON.bat=pixelSvg(["k.........k","kk..k.k..kk","kkkkrkrkkkk",".kkk.k.kkk.","..k.....k.."],{k:'#c9c0e6',r:'#ff4a3a'});
 ICON.leaf=pixelSvg([".....g.","...gggg","..ggGgg",".ggGgg.",".gGgg..","gGgg...","k......"],{g:'#d98a2a',G:'#8a4a14',k:'#5a3a14'});
 ICON.sarc=pixelSvg(["..kkkk..",".kbbbbk.","kbyyyybk","kbykkybk","kbyyyybk",".kbyybk.",".kyyyyk.","kbbbbbbk","kyyyyyyk","kbbbbbbk","kyyyyyyk","kbbbbbbk",".kyyyyk.",".kbbbbk.","..kyyk..","...kk..."],{y:'#ffd27a',b:'#2f6f8a',k:'#2a1a06'});
@@ -920,16 +936,17 @@ function gradCss(cols){
 }
 // Background critters for some themes (fish, starships, a scarab)
 function ambientHtml(){
-  const R=(a,b)=>a+Math.random()*(b-a),th=S.theme;
-  if(th==='ocean')return [0,1,2].map(k=>{const rev=Math.random()<.5,d=R(11,19);
-    return `<span class="fish${rev?' rev':''}" style="top:${R(14,72)}%;--d:${d}s;animation-delay:-${R(0,d)}s;--s:${R(.7,1.25)}">${[ICON.fishA,ICON.fishB,ICON.fishC][k]}</span>`}).join('');
-  if(th==='space')return [0,1].map(k=>{const rev=Math.random()<.5,d=R(14,24);
-    return `<span class="sship${rev?' rev':''}" style="top:${R(12,70)}%;--d:${d}s;animation-delay:-${R(0,d)}s;--s:${k?.6:1}">${ICON.starship}</span>`}).join('');
-  if(th==='haunted')return [0,1].map(k=>{const d=R(9,15);
-    return `<span class="spider" style="left:${R(12,88)}%;--d:${d}s;--drop:${R(25,55)}cqh;animation-delay:-${R(0,d)}s"><i class="thread"></i><i class="sp sa">${ICON.spider}</i><i class="sp sb">${ICON.spider2}</i></span>`}).join('');
-  if(th==='forest'){const d=R(16,24);return `<span class="squirrel" style="top:${R(60,72)}%;--d:${d}s;animation-delay:-${R(0,d)}s"><span class="hop"><i class="fa">${ICON.squirrelA}</i><i class="fb">${ICON.squirrelB}</i></span></span>`}
-  if(th==='fantasy'||!th){const d=R(34,46);return `<span class="wizard" style="top:${R(58,70)}%;--d:${d}s;animation-delay:-${R(0,d)}s"><i class="fa">${ICON.wizA}</i><i class="fb">${ICON.wizB}</i><i class="wspark">${ICON.spark}</i></span>`}
-  if(th==='desert'){const d=R(22,32);return `<span class="scarab" style="top:${R(58,72)}%;--d:${d}s;animation-delay:-${R(0,d)}s"><i class="fa">${ICON.scarabA}</i><i class="fb">${ICON.scarabB}</i></span>`}
+  // critters show up now and then: each crosses during a short part of a long cycle
+  const R=(a,b)=>a+Math.random()*(b-a),th=S.theme,go=d=>`--d:${d}s;animation-delay:-${R(0,d).toFixed(1)}s`;
+  const walker=(cls,a,b,d,extra='')=>`<span class="walker ${cls}" style="top:${R(56,70)}%;${go(d)}"><i class="fa">${a}</i><i class="fb">${b}</i>${extra}</span>`;
+  if(th==='ocean')return [0,1].map(k=>{const rev=Math.random()<.5;
+    return `<span class="fish${rev?' rev':''}" style="top:${R(14,72)}%;${go(R(30,46))};--s:${R(.7,1.25)}">${[ICON.fishA,ICON.fishB,ICON.fishC][Math.floor(Math.random()*3)]}</span>`}).join('');
+  if(th==='space')return [0,1].map(k=>{const rev=Math.random()<.5;
+    return `<span class="sship${rev?' rev':''}" style="top:${R(12,70)}%;${go(R(36,56))};--s:${k?.6:1}">${ICON.starship}</span>`}).join('');
+  if(th==='haunted')return [0,1].map(k=>`<span class="spider" style="left:${R(12,88)}%;--drop:${R(25,55)}cqh;${go(R(26,40))}"><i class="thread"></i><i class="sp sa">${ICON.spider}</i><i class="sp sb">${ICON.spider2}</i></span>`).join('');
+  if(th==='forest')return `<span class="squirrel" style="top:${R(60,72)}%;${go(R(44,60))}"><span class="hop"><i class="fa">${ICON.squirrelA}</i><i class="fb">${ICON.squirrelB}</i></span></span>`;
+  if(th==='fantasy'||!th)return walker('wizard',ICON.wizA,ICON.wizB,R(80,100),`<i class="wspark">${ICON.spark}</i>`)+walker('knight',ICON.knA,ICON.knB,R(90,115))+walker('princess',ICON.prA,ICON.prB,R(100,125));
+  if(th==='desert')return `<span class="scarab" style="top:${R(58,72)}%;${go(R(55,75))}"><i class="fa">${ICON.scarabA}</i><i class="fb">${ICON.scarabB}</i></span><span class="snake" style="top:${R(68,76)}%;${go(R(60,85))}"><i class="fa">${ICON.snakeA}</i><i class="fb">${ICON.snakeB}</i></span>`;
   return '';
 }
 function bgCss(p){
