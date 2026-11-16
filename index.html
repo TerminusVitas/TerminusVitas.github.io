@@ -423,6 +423,25 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 .sharebtn{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;font-size:17px}
 .sharebtn .px{width:24px;height:24px}
 .sharebox{width:100%;min-height:96px;background:var(--well);color:var(--text);border:3px solid var(--line);font:14px/1.4 system-ui,sans-serif;padding:8px}
+#rollPop{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
+.rcard{width:min(86vw,340px);background:var(--sheet);border:3px solid var(--sheetBorder);clip-path:var(--notch);padding:18px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--text)}
+.rtitle{font:700 20px var(--font);color:var(--accent)}
+.rstage{position:relative;width:170px;height:170px;display:flex;align-items:center;justify-content:center}
+.rthing{width:140px;height:140px}
+.rthing .px{width:100%;height:100%;display:block}
+.rnum{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);font:900 46px var(--font);color:#fff;text-shadow:3px 3px 0 #000,0 0 10px rgba(0,0,0,.6);pointer-events:none}
+.rres{font:900 26px var(--font);min-height:34px;text-align:center}
+.rres.crit{color:#ffd23f;text-shadow:0 0 10px rgba(255,210,63,.8)}
+.rres.fail{color:#ff6a5a}
+.rthing.tumble{animation:tumble .95s cubic-bezier(.3,.7,.4,1) both}
+@keyframes tumble{0%{transform:translateY(-70px) rotate(0) scale(.7)}25%{transform:translateY(0) rotate(260deg) scale(1)}40%{transform:translateY(-34px) rotate(420deg)}60%{transform:translateY(0) rotate(560deg)}72%{transform:translateY(-12px) rotate(640deg)}86%{transform:translateY(0) rotate(700deg)}100%{transform:translateY(0) rotate(720deg)}}
+.rthing.flip{animation:toss 1.2s cubic-bezier(.3,.6,.4,1) both}
+@keyframes toss{0%{transform:translateY(30px)}45%{transform:translateY(-50px)}100%{transform:translateY(0)}}
+.rthing.flip .px{animation:spinY .16s linear 7 alternate}
+@keyframes spinY{from{transform:scaleY(1)}to{transform:scaleY(.08)}}
+.rthing.land{animation:land .35s ease-out}
+@keyframes land{0%{transform:scale(1.18)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.rthing.tumble,.rthing.flip,.rthing.flip .px{animation-duration:.01s!important}}
 </style>
 </head>
 <body>
@@ -432,6 +451,12 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 <button id="turnBtn" class="qbtn" aria-label="Pass turn"><i data-icon="hourglass"></i><span class="qnum"></span></button>
 <button id="dnBtn" class="qbtn hidden" aria-label="Day or night"></button>
 
+<div id="rollPop" class="hidden"><div class="rcard">
+  <div class="rtitle" id="rTitle"></div>
+  <div class="rstage"><div class="rthing" id="rThing"></div><div class="rnum" id="rNum"></div></div>
+  <div class="rres" id="rRes"></div>
+  <div class="fbtns"><button class="gold" id="rAgain">Roll again</button><button id="rDone">Done</button></div>
+</div></div>
 <div id="modal" class="hidden">
   <div class="sheet">
     <div class="shead"><h2 data-ribbon>Settings</h2><div class="shbtns"><button id="resetBtn" class="danger">Reset game</button><button class="xbtn" data-a="close" aria-label="Close"><i data-icon="close"></i></button></div></div>
@@ -500,7 +525,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 8</div>
+    <div class="note fcp">Grim Tally · version 9</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -560,6 +585,18 @@ ICON.share=(()=>{const rows=[];for(let y=0;y<12;y++){let row='';for(let x=0;x<12
   const onLine=(x0,y0,x1,y1)=>{const t=Math.max(0,Math.min(1,((x-x0)*(x1-x0)+(y-y0)*(y1-y0))/((x1-x0)**2+(y1-y0)**2)));return Math.hypot(x-(x0+t*(x1-x0)),y-(y0+t*(y1-y0)))<=.55};
   row+=(near(9,2)||near(2.5,6)||near(9,9.5))?'w':(onLine(2.5,6,9,2)||onLine(2.5,6,9,9.5))?'l':'.';}rows.push(row);}
   return pixelSvg(rows,{w:'#f6e3bb',l:'#d9c39a'});})();
+// coin faces and a six-sided die for the roll window
+function coinFace(sym){const rows=[];for(let y=0;y<16;y++){let row='';for(let x=0;x<16;x++){
+  const d=Math.hypot(x-7.5,y-7.5);let c=d<=7.4?(d>6.2?(x+y<14?'Y':'O'):(x+y<12?'y':'g')):'.';
+  const sx=x-4,sy=y-5;if(sym[sy]&&sym[sy][sx]&&sym[sy][sx]!=='.'&&d<6)c=sym[sy][sx];
+  row+=c;}rows.push(row);}return pixelSvg(rows,{y:'#ffd23f',g:'#e8b42a',Y:'#fff1a8',O:'#a8741a',k:'#6a4208',r:'#e8432e'});}
+ICON.heads=coinFace(["k.kk.k.k","kkkkkkkk","krkkkkrk","kkkkkkkk","........"].map(r=>r.replace(/\./g,'.')));
+ICON.tails=coinFace(["k......k",".k....k.","..k..k..","...kk...","..k..k..","kk....kk"]);
+function d6Face(n){const pips={1:[[5,5]],2:[[2,2],[8,8]],3:[[2,2],[5,5],[8,8]],4:[[2,2],[8,2],[2,8],[8,8]],5:[[2,2],[8,2],[5,5],[2,8],[8,8]],6:[[2,2],[8,2],[2,5],[8,5],[2,8],[8,8]]}[n]||[];
+  const rows=[];for(let y=0;y<12;y++){let row='';for(let x=0;x<12;x++){
+    let c=(x===0||y===0||x===11||y===11)?((x===0||x===11)&&(y===0||y===11)?'.':'k'):(x+y>15?'s':'w');
+    pips.forEach(([px,py])=>{if(x>=px&&x<=px+1&&y>=py&&y<=py+1)c='p'});row+=c;}rows.push(row);}
+  return pixelSvg(rows,{k:'#1a1208',w:'#f4ecd8',s:'#d4c8ad',p:'#2a1c10'});}
 ICON.coffee=pixelSvg(["............","...s..s.....","....s..s....","...s..s.....",".kkkkkkkk...",".kbbbbbbkkk.",".kwwwwwwk.k.",".kwwwwwwk.k.",".kwwwwwwkkk.","..kwwwwk....","kkkkkkkkkk..","............"],{k:'#2a1a0c',w:'#f6e3bb',b:'#7a4a22',s:'#e6e6e6'});
 ICON.bubble=pixelSvg(["..www..",".w...w.","w.h...w","w.....w","w.....w",".w...w.","..www.."],{w:'#d8fbff',h:'#ffffff'});
 ICON.reaper=pixelSvg(["......lllllllll.","....lll.......n.","...ll...kkkk..n.",".......kcccck.n.","......kcwwwwckn.","......kcwkkwckn.","......kcwwwwckn.","......kcCwwCckn.",".....kccccccwwn.",".....kcCccccCkn.","....kccCccccCkn.","....kcCcccccCkn.","...kccCcccccCkn.","...kcCccccccCkn.","..kccCccccccCkn.","..kkkkkkkkkkkkn."],
@@ -667,7 +704,7 @@ function sfx(kind){
     const now=AC.currentTime;
     if((kind==='up'||kind==='down')&&performance.now()-lastSfx<45)return;
     lastSfx=performance.now();
-    const seq={up:[[660,.05]],down:[[220,.05]],undo:[[440,.05],[330,.06]],turn:[[523,.07],[784,.1]],
+    const seq={roll:[[180,.03],[260,.03],[200,.03],[300,.03],[220,.03],[320,.03],[240,.04]],coin:[[1200,.04],[1500,.04],[1200,.04],[1500,.05]],up:[[660,.05]],down:[[220,.05]],undo:[[440,.05],[330,.06]],turn:[[523,.07],[784,.1]],
       death:[[392,.12],[311,.12],[247,.14],[156,.3]],win:[[523,.1],[659,.1],[784,.1],[1047,.3]],revive:[[262,.08],[392,.08],[523,.14]],mark:[[880,.06]]}[kind]||[[440,.05]];
     let t=now;
     seq.forEach(([f,d])=>{
@@ -1360,9 +1397,9 @@ document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>
   if(a==='pl+'&&S.count<8){S.count++;if(S.teams&&S.count%2)S.teams=false;render();refreshModal()}
   if(a==='pass'){passTurn();refreshModal()}
   if(a==='undo'){undo();refreshModal()}
-  if(a==='planar'){const f=Math.floor(Math.random()*6);res.innerHTML=ICON.d20+(f===0?' Chaos!':f===1?' Planeswalk!':' Blank');}
-  if(a==='d20')res.innerHTML=ICON.d20+' '+(1+Math.floor(Math.random()*20));
-  if(a==='coin')res.innerHTML=ICON.coin+(Math.random()<.5?' Heads':' Tails');
+  if(a==='planar')openRoll('planar');
+  if(a==='d20')openRoll('d20');
+  if(a==='coin')openRoll('coin');
   if(a==='first'){
     const i=Math.floor(Math.random()*S.count);
     closeModal();
@@ -1410,6 +1447,39 @@ document.getElementById('shareBtn').addEventListener('click',async()=>{
   msg.innerHTML='Copy this and paste it into your post:<textarea class="sharebox" readonly></textarea>';
   const ta=msg.querySelector('textarea');ta.value=SHARE_TEXT;ta.focus();ta.select();
 });
+// ---------- Dice & coin window ----------
+let rollKind='d20',rollTimer=null;
+function openRoll(kind){rollKind=kind;document.getElementById('rollPop').classList.remove('hidden');doRoll()}
+function closeRoll(){clearInterval(rollTimer);document.getElementById('rollPop').classList.add('hidden')}
+function doRoll(){
+  const thing=document.getElementById('rThing'),num=document.getElementById('rNum'),res=document.getElementById('rRes'),title=document.getElementById('rTitle'),again=document.getElementById('rAgain');
+  clearInterval(rollTimer);res.textContent='';res.className='rres';num.textContent='';thing.className='rthing';void thing.offsetWidth;
+  if(rollKind==='coin'){
+    title.textContent='Coin flip';again.textContent='Flip again';sfx('coin');
+    const heads=Math.random()<.5;let f=0;
+    thing.innerHTML=ICON.heads;thing.classList.add('flip');
+    rollTimer=setInterval(()=>{f++;thing.innerHTML=f%2?ICON.tails:ICON.heads},160);
+    setTimeout(()=>{clearInterval(rollTimer);thing.innerHTML=heads?ICON.heads:ICON.tails;thing.className='rthing land';res.textContent=heads?'Heads':'Tails';sfx('mark');
+      document.getElementById('result').innerHTML=ICON.coin+(heads?' Heads':' Tails')},1150);
+    return;
+  }
+  const d20=rollKind==='d20';
+  title.textContent=d20?'Roll a d20':'Planar die';again.textContent='Roll again';sfx('roll');
+  thing.innerHTML=d20?ICON.d20:d6Face(1);thing.classList.add('tumble');
+  rollTimer=setInterval(()=>{if(d20)num.textContent=1+Math.floor(Math.random()*20);else thing.innerHTML=d6Face(1+Math.floor(Math.random()*6))},75);
+  const v=d20?1+Math.floor(Math.random()*20):Math.floor(Math.random()*6);
+  setTimeout(()=>{
+    clearInterval(rollTimer);thing.className='rthing land';sfx('mark');
+    if(d20){num.textContent=v;res.textContent=v===20?'Natural 20!':v===1?'Critical fail…':'You rolled '+v;if(v===20)res.classList.add('crit');if(v===1)res.classList.add('fail');
+      document.getElementById('result').innerHTML=ICON.d20+' '+v}
+    else{const label=v===0?'Chaos!':v===1?'Planeswalk!':'Blank';
+      thing.innerHTML=v===0?ICON.boom:v===1?ICON.rune:d6Face(1).replace(/#2a1c10/g,'#f4ecd8');res.textContent=label;if(v<2)res.classList.add('crit');
+      document.getElementById('result').innerHTML=ICON.d20+' '+label}
+  },1000);
+}
+document.getElementById('rAgain').addEventListener('click',doRoll);
+document.getElementById('rDone').addEventListener('click',closeRoll);
+document.getElementById('rollPop').addEventListener('click',e=>{if(e.target.id==='rollPop')closeRoll()});
 document.getElementById('undoBtn').addEventListener('click',undo);
 document.getElementById('turnBtn').addEventListener('click',passTurn);
 document.getElementById('dnBtn').addEventListener('click',()=>{mark(true);S.dayNight=S.dayNight==='day'?'night':'day';sfx('mark');refreshTable();save()});
