@@ -507,7 +507,8 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <div class="ptoggle"><div class="plabel">Plain numbers (easier to read)</div><button class="qbtog" data-qb="plainNums"></button></div>
     </div>
     <div class="row"><span data-ribbon>Layout</span>
-      <div class="seg" id="layoutSeg"><button data-layout="table">Around table</button><button data-layout="upright">All face me</button></div>
+      <div class="seg" id="layoutSeg"><button data-layout="table">Around table</button><button data-layout="sides">Two sides</button><button data-layout="upright">All face me</button><button data-layout="strips">Stacked</button><button data-layout="custom">Custom</button></div>
+      <div class="note" id="layoutNote"></div>
     </div>
     <div class="row"><span data-ribbon>Tools</span>
       <div class="tools"><button data-a="d20"><i data-icon="d20"></i> Roll d20</button><button data-a="coin"><i data-icon="coin"></i> Flip coin</button><button data-a="planar"><i data-icon="d20"></i> Planar die</button></div>
@@ -525,7 +526,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 9</div>
+    <div class="note fcp">Grim Tally · version 10</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -768,6 +769,26 @@ function isDead(i){
 // Seat placement: clockwise around the table, tiles rotated to face each seat
 function placements(n,layout){
   const P=[];
+  // Stacked: one full-width row per player, everyone facing the phone's owner
+  if(layout==='strips'&&n>1){
+    for(let i=0;i<n;i++)P.push({i,row:i+1,col:1,span:1,rot:0});
+    return{cols:1,rows:n,P};
+  }
+  // Two sides: players along the two long sides of a table, facing each other.
+  // Seat order runs clockwise: bottom row left to right, then top row right to left.
+  if(layout==='sides'&&n>2){
+    const a=Math.floor(n/2),b=n-a,cols=a*b;
+    let idx=0;
+    for(let k=0;k<b;k++)P.push({i:idx++,row:2,col:k*a+1,span:a,rot:0});
+    for(let k=a-1;k>=0;k--)P.push({i:idx++,row:1,col:k*b+1,span:b,rot:180});
+    return{cols,rows:2,P};
+  }
+  // Custom: the All-face-me grid, but each player picks which way their area faces
+  if(layout==='custom'){
+    const g=placements(n,'upright');
+    g.P.forEach(q=>q.rot=+(S.players[q.i]&&S.players[q.i].seatRot)||0);
+    return g;
+  }
   if(layout==='upright'||n===1){
     const cols=n<=2?1:2,rows=Math.ceil(n/cols);
     for(let i=0;i<n;i++){
@@ -847,14 +868,27 @@ function placeMenu(){
     else if(z.fa)y+=off;          // full-width tile above: drop into the column seam below
     else if(z.fb)y-=off;          // full-width tile below: lift into the column seam above
   }
+  const g=56;let pos=null,dn=null;
+  // Two sides: name banners line the middle seam, so sit on a gap between seats and stack the buttons upward
+  if(S.layout==='sides'&&S.count>2&&seams.length){
+    const z=seams[0],topR=rs.filter(q=>q.bottom<=z.y+1),botR=rs.filter(q=>q.top>=z.y-1);
+    const tb=topR.map(q=>q.right).filter(v=>v<R-2),bb=botR.map(q=>q.right).filter(v=>v<R-2);
+    const near=a=>a.reduce((m,v)=>Math.abs(v-cx)<Math.abs(m-cx)?v:m,a[0]);
+    const common=tb.filter(v=>bb.some(w=>Math.abs(v-w)<4));
+    if(common.length){x=near(common)+2;y=z.y}else{x=near(tb)+2;y=z.y-off}
+    pos=[[x,y-g],[x,y-2*g]];dn=common.length?[x,y+g]:[x,y-3*g];
+  }else if(seams.length&&!seams.filter(z=>!z.fa&&!z.fb).length&&seams.some(z=>z.fa&&z.fb)){
+    // full-width rows (2 players, Stacked): medallion at the left end of the seam, buttons at the right end
+    pos=[[R-off-g,y],[R-off,y]];
+  }
   btn.style.left=x+'px';btn.style.top=y+'px';
-  const g=56,room=x-g-24>L,roomR=x+g+24<R;
-  const pos=roomR&&room?[[x-g,y],[x+g,y]]:room?[[x-g,y],[x-2*g,y]]:[[x+g,y],[x+2*g,y]];
+  if(!pos){const room=x-g-24>L,roomR=x+g+24<R;
+    pos=roomR&&room?[[x-g,y],[x+g,y]]:room?[[x-g,y],[x-2*g,y]]:[[x+g,y],[x+2*g,y]];}
   const put=(id,[px,py])=>{const e=document.getElementById(id);if(e){e.style.left=px+'px';e.style.top=py+'px'}};
   const vis=[S.showUndo&&'undoBtn',S.showTurn&&'turnBtn'].filter(Boolean);
   ['undoBtn','turnBtn'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.toggle('hidden',!vis.includes(id))});
   vis.forEach((id,k)=>put(id,pos[k]));
-  put('dnBtn',[x,y+g+4<B?y+g+4:y-g-4]);
+  put('dnBtn',dn||[x,y+g+4<B?y+g+4:y-g-4]);
 }
 function layoutInner(){
   board.querySelectorAll('.tile').forEach(t=>{
@@ -1120,6 +1154,7 @@ function openBgPanel(i){
   const plain=COLORS.map((c,k)=>`<button class="sw" data-g="p" data-k="${k}" style="background:${gradCss([c])}"></button>`).join('');
   const profs=loadProfiles();
   panel.innerHTML=`<div class="phead"><h3>${ribbon('Look for '+esc(p.name))}</h3><button class="xbtn pclose" aria-label="Close">${ICON.close}</button></div>
+    ${S.layout==='custom'?`<div class="swgroup"><b>Facing (Custom layout)</b><div class="seg facing">${[[180,'Away ↑'],[90,'Left ←'],[0,'Me ↓'],[270,'Right →']].map(([d,l])=>`<button data-rot="${d}" class="${(+p.seatRot||0)===d?'on':''}">${l}</button>`).join('')}</div></div>`:''}
     <div class="pfield swgroup"><b>Deck name</b><input class="deckin" maxlength="28" placeholder="Optional, shown under the name" value="${esc(p.deck||'')}"></div>
     <div class="swgroup"><b>Saved profiles</b><div class="proflist">${profs.map((q,k)=>`<button class="profbtn" data-p="${k}">${esc(q.name)}${q.deck?' · '+esc(q.deck):''}<span class="pdel" data-del="${k}">✕</span></button>`).join('')}
       <button class="profbtn add">+ Save ${esc(p.name)} as profile</button></div><div class="note">Profiles keep a name, deck and background so you can pick them next game.</div></div>
@@ -1136,6 +1171,7 @@ function openBgPanel(i){
     <button class="pdone">Done</button>`;
   panel.classList.remove('hidden');syncPanelState();
   const groups={m:MONO,g:GUILDS,s:SHARDS};
+  panel.querySelectorAll('.facing button').forEach(b=>b.addEventListener('click',()=>{p.seatRot=+b.dataset.rot;save();render();openBgPanel(i)}));
   const deckin=panel.querySelector('.deckin');
   deckin.addEventListener('input',()=>{p.deck=deckin.value;updateTile(i);save()});
   deckin.addEventListener('keydown',e=>{if(e.key==='Enter')deckin.blur()});
@@ -1375,6 +1411,9 @@ function refreshModal(){
   const custom=document.getElementById('customLife');
   if(![20,30,40].includes(S.start))custom.value=S.start;
   document.querySelectorAll('#layoutSeg button').forEach(b=>b.classList.toggle('on',b.dataset.layout===S.layout));
+  document.getElementById('layoutNote').textContent={table:'Phone in the middle; every seat faces its player.',sides:'Long table: players sit along two sides, facing each other.',
+    upright:'Everyone faces you, in a grid.',strips:'Everyone faces you, one row per player. Good for 5 to 8 players.',
+    custom:'Grid where each player turns their own area: tap their palette button and choose a direction.'}[S.layout]||'';
 }
 function setStart(v){
   if(!v||v<1||v>999)return;
