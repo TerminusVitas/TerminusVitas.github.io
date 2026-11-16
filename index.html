@@ -180,7 +180,7 @@ button{font-family:inherit;cursor:pointer}
 .phead{background:var(--phead)}
 .note{color:var(--muted)}
 .stepper b,#result{font-family:var(--font);color:var(--text);text-shadow:2px 2px 0 #000}
-.stepper button,.seg button,.tools button,.danger,.primary,.search a,.coffee,.xbtn,.pbtn,.pdone,.bgact,.sw,.fbtns button,.ptoggle button,.pconcede,.pmore,.profbtn,.histbtn,.theme-opts button{
+.stepper button,.seg button,.tools button,.danger,.primary,.search a,.coffee,.sharebtn,.xbtn,.pbtn,.pdone,.bgact,.sw,.fbtns button,.ptoggle button,.pconcede,.pmore,.profbtn,.histbtn,.theme-opts button{
   background:var(--wood);border:3px solid var(--line);border-radius:0;clip-path:var(--notch);
   color:var(--text);font-family:var(--font);font-weight:700;text-shadow:2px 2px 0 #1a0f06;box-shadow:none;transition:transform .06s,filter .06s}
 .stepper button:active,.seg button:active,.tools button:active,.danger:active,.primary:active,.search a:active,.xbtn:active,.pbtn:active,.pdone:active,.bgact:active,.sw:active{transform:translateY(2px);filter:brightness(1.15)}
@@ -420,6 +420,9 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 .coffee{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;font-size:17px;text-decoration:none;background:var(--gold)!important;color:#3b2412!important;text-shadow:none!important}
 .coffee .px{width:26px;height:26px}
 .fcp{font-size:11px;opacity:.7;line-height:1.35}
+.sharebtn{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;font-size:17px}
+.sharebtn .px{width:24px;height:24px}
+.sharebox{width:100%;min-height:96px;background:var(--well);color:var(--text);border:3px solid var(--line);font:14px/1.4 system-ui,sans-serif;padding:8px}
 </style>
 </head>
 <body>
@@ -489,11 +492,15 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <div id="stats"></div>
       <button id="clearHist" class="danger">Clear history</button>
     </div>
+    <div class="row"><span data-ribbon>Share</span>
+      <button class="sharebtn" id="shareBtn"><i data-icon="share"></i> Share Grim Tally</button>
+      <div class="note" id="shareMsg">Tell your playgroup! Opens your phone's share menu with a ready-made post.</div>
+    </div>
     <div class="row" id="supportRow"><span data-ribbon>Support</span>
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 7</div>
+    <div class="note fcp">Grim Tally · version 8</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -548,6 +555,11 @@ ICON.rune=(()=>{const N=21,c=10,rows=[];for(let y=0;y<N;y++){let row='';for(let 
   else if(d<9&&d>6.9&&Math.round((a+Math.PI)/(Math.PI/4))%2===0&&Math.abs(((a+Math.PI)%(Math.PI/4))-Math.PI/8)<.18)ch='c';
   else if(d<6&&(Math.abs(x-c)<.6||Math.abs(y-c)<.6||Math.abs(Math.abs(x-c)-Math.abs(y-c))<.6))ch='v';
   row+=ch;}rows.push(row);}return pixelSvg(rows,{v:'#cbb6ff',c:'#9fe8ff'});})();
+ICON.share=(()=>{const rows=[];for(let y=0;y<12;y++){let row='';for(let x=0;x<12;x++){
+  const near=(cx,cy)=>Math.hypot(x-cx,y-cy)<=1.8;
+  const onLine=(x0,y0,x1,y1)=>{const t=Math.max(0,Math.min(1,((x-x0)*(x1-x0)+(y-y0)*(y1-y0))/((x1-x0)**2+(y1-y0)**2)));return Math.hypot(x-(x0+t*(x1-x0)),y-(y0+t*(y1-y0)))<=.55};
+  row+=(near(9,2)||near(2.5,6)||near(9,9.5))?'w':(onLine(2.5,6,9,2)||onLine(2.5,6,9,9.5))?'l':'.';}rows.push(row);}
+  return pixelSvg(rows,{w:'#f6e3bb',l:'#d9c39a'});})();
 ICON.coffee=pixelSvg(["............","...s..s.....","....s..s....","...s..s.....",".kkkkkkkk...",".kbbbbbbkkk.",".kwwwwwwk.k.",".kwwwwwwk.k.",".kwwwwwwkkk.","..kwwwwk....","kkkkkkkkkk..","............"],{k:'#2a1a0c',w:'#f6e3bb',b:'#7a4a22',s:'#e6e6e6'});
 ICON.bubble=pixelSvg(["..www..",".w...w.","w.h...w","w.....w","w.....w",".w...w.","..www.."],{w:'#d8fbff',h:'#ffffff'});
 ICON.reaper=pixelSvg(["......lllllllll.","....lll.......n.","...ll...kkkk..n.",".......kcccck.n.","......kcwwwwckn.","......kcwkkwckn.","......kcwwwwckn.","......kcCwwCckn.",".....kccccccwwn.",".....kcCccccCkn.","....kccCccccCkn.","....kcCcccccCkn.","...kccCcccccCkn.","...kcCccccccCkn.","..kccCccccccCkn.","..kkkkkkkkkkkkn."],
@@ -1385,6 +1397,19 @@ document.getElementById('howBtn').addEventListener('click',e=>{
   try{if(play)localStorage.setItem('mtglife-store','play');else play=localStorage.getItem('mtglife-store')==='play'}catch(e){}
   if(play){const r=document.getElementById('supportRow');if(r)r.remove()}
 })();
+// ---------- Share ----------
+const SHARE_URL='https://terminusvitas.github.io';
+const SHARE_TEXT='I\'ve been tracking my Commander games with Grim Tally, a free pixel-art life counter with 10 animated themes, commander damage, and a grim reaper for the fallen. ⚔️🎲 Try it: '+SHARE_URL;
+document.getElementById('shareBtn').addEventListener('click',async()=>{
+  const msg=document.getElementById('shareMsg');
+  try{
+    if(navigator.share){await navigator.share({title:'Grim Tally',text:SHARE_TEXT});return}
+  }catch(e){if(e&&e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(SHARE_TEXT);msg.textContent='Copied! Paste it into your post.';return}catch(e){}
+  // last resort: show the text to copy by hand
+  msg.innerHTML='Copy this and paste it into your post:<textarea class="sharebox" readonly></textarea>';
+  const ta=msg.querySelector('textarea');ta.value=SHARE_TEXT;ta.focus();ta.select();
+});
 document.getElementById('undoBtn').addEventListener('click',undo);
 document.getElementById('turnBtn').addEventListener('click',passTurn);
 document.getElementById('dnBtn').addEventListener('click',()=>{mark(true);S.dayNight=S.dayNight==='day'?'night':'day';sfx('mark');refreshTable();save()});
