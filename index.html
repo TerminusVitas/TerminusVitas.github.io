@@ -504,6 +504,41 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 .artpick b{font:700 11px var(--font);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .artpick i{font:10px system-ui,sans-serif;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:normal}
 .artpick.on{outline:3px solid var(--accent)}
+.fx-layer.front{z-index:2}
+.clash{position:absolute;top:44%;width:9cqmin;height:26cqmin;margin-top:-26cqmin;transform-origin:50% 100%;filter:drop-shadow(0 0 3px rgba(0,0,0,.8))}
+.clash .px{width:100%;height:100%;display:block}
+.clash.l{left:calc(50% - 16cqmin);animation:swingL .55s cubic-bezier(.5,0,.75,1) .1s both,clashFade .5s ease-in 1.5s forwards}
+.clash.r{left:calc(50% + 7cqmin);animation:swingR .55s cubic-bezier(.5,0,.75,1) .1s both,clashFade .5s ease-in 1.5s forwards}
+@keyframes swingL{0%{transform:rotate(-95deg);opacity:0}30%{opacity:1}80%{transform:rotate(42deg)}90%{transform:rotate(30deg)}100%{transform:rotate(35deg)}}
+@keyframes swingR{0%{transform:rotate(95deg);opacity:0}30%{opacity:1}80%{transform:rotate(-42deg)}90%{transform:rotate(-30deg)}100%{transform:rotate(-35deg)}}
+@keyframes clashFade{to{opacity:0}}
+.spark{position:absolute;left:50%;top:calc(44% - 20cqmin);width:22cqmin;height:22cqmin;transform:translate(-50%,-50%) scale(0);animation:sparkBurst .7s ease-out .58s both}
+.spark .px{width:100%;height:100%;display:block}
+@keyframes sparkBurst{0%{transform:translate(-50%,-50%) scale(.2) rotate(0);opacity:1}40%{transform:translate(-50%,-50%) scale(1.3) rotate(20deg);opacity:1}100%{transform:translate(-50%,-50%) scale(1.7) rotate(45deg);opacity:0}}
+.amb{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.amb .px{width:100%;height:100%;display:block}
+.fish{position:absolute;left:0;width:calc(11cqmin*var(--s));height:calc(6cqmin*var(--s));opacity:.7;animation:swimL var(--d) linear infinite}
+.fish.rev{animation-name:swimR}
+.fish .px{animation:fishBob 1.6s ease-in-out infinite}
+@keyframes swimL{from{transform:translateX(115cqw)}to{transform:translateX(-25cqw)}}
+@keyframes swimR{from{transform:translateX(-25cqw) scaleX(-1)}to{transform:translateX(115cqw) scaleX(-1)}}
+@keyframes fishBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-18%)}}
+.sship{position:absolute;left:0;width:calc(16cqmin*var(--s));height:calc(7cqmin*var(--s));opacity:.85;animation:flyR var(--d) linear infinite}
+.sship.rev{animation-name:flyL}
+.sship .px{animation:engine .25s steps(2) infinite}
+@keyframes flyR{0%{transform:translateX(-30cqw)}35%,100%{transform:translateX(130cqw)}}
+@keyframes flyL{0%{transform:translateX(130cqw) scaleX(-1)}35%,100%{transform:translateX(-30cqw) scaleX(-1)}}
+@keyframes engine{from{filter:brightness(1)}to{filter:brightness(1.35)}}
+.scarab{position:absolute;left:0;width:13cqmin;height:10cqmin;opacity:.85;animation:crawl var(--d) linear infinite}
+.scarab i{position:absolute;inset:0}
+.scarab .fb{animation:legs .3s steps(1) infinite}
+.scarab .fa{animation:legs .3s steps(1) -.15s infinite}
+@keyframes legs{0%{opacity:1}50%{opacity:0}}
+@keyframes crawl{0%{transform:translate(-15cqw,0)}25%{transform:translate(25cqw,-2cqh)}50%{transform:translate(55cqw,1cqh)}75%{transform:translate(85cqw,-1cqh)}100%{transform:translate(118cqw,0)}}
+.ship{position:absolute;left:50%;top:14%;width:30cqmin;height:23cqmin;transform:translateX(-50%);animation:sink 2.8s ease-in .2s both}
+.ship .px{width:100%;height:100%;display:block}
+@keyframes sink{0%{transform:translate(-50%,0) rotate(0);opacity:1}18%{transform:translate(-50%,-4%) rotate(-7deg)}38%{transform:translate(-50%,6%) rotate(16deg)}100%{transform:translate(-50%,190%) rotate(38deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.amb{display:none}}
 </style>
 </head>
 <body>
@@ -590,7 +625,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 14</div>
+    <div class="note fcp">Grim Tally · version 16</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -636,6 +671,27 @@ ICON.boom=(()=>{const N=16,c=7.5,rows=[];
     const a=Math.atan2(y-c,x-c),d=Math.hypot(x-c,y-c)-(1.3*Math.sin(a*7)+.6*Math.sin(a*3+1));
     row+=d<2.2?'w':d<3.8?'y':d<5.3?'o':d<6.6?'r':d<7.4?'k':'.';}rows.push(row);}
   return pixelSvg(rows,{w:'#ffffff',y:'#fff27a',o:'#ff9a2e',r:'#e8432e',k:'#5a1a10'});})();
+ICON.bigsword=pixelSvg(["....w....","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...","...lwL...",".yyyyyyy.",".YYYYYYY.","...nnn...","...nNn...","...nnn...","...nNn...","...yYy...","....Y...."],
+  {w:'#f4f8ff',l:'#b8c2d0',L:'#7d8796',y:'#ffd23f',Y:'#c98a12',n:'#7a4a22',N:'#4a2c12'},'','preserveAspectRatio="none"');
+ICON.spark=pixelSvg(["....w....","....y....","w..wyw..w",".y.yoy.y.","..yoWoy..",".y.yoy.y.","w..wyw..w","....y....","....w...."],{w:'#ffffff',W:'#ffffff',y:'#fff27a',o:'#ff9a2e'});
+// fish: oval body + tail, eye near the head (faces left)
+function fishSprite(body,belly){const rows=[];for(let y=0;y<7;y++){let row='';for(let x=0;x<13;x++){
+  const inB=((x-4.8)/4.4)**2+((y-3)/2.7)**2<=1,inT=x>=8&&x<=12&&Math.abs(y-3)<=(x-7.5)*.8;
+  let c='.';if(inB||inT)c=y>=4&&inB?'b':'o';if(x===2&&y===2)c='e';row+=c;}rows.push(row);}
+  const out=rows.map((row,y)=>row.split('').map((c,x)=>c!=='.'?c:[[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>rows[y+b]&&rows[y+b][x+a]&&rows[y+b][x+a]!=='.')?'k':'.').join(''));
+  return pixelSvg(out,{o:body,b:belly,e:'#0b1a26',k:'#062530'});}
+ICON.fishA=fishSprite('#ff9a2e','#ffd2a0');ICON.fishB=fishSprite('#4ad6c8','#c8fff6');ICON.fishC=fishSprite('#ffd23f','#fff1b0');
+ICON.ship=pixelSvg([".......kr.......",".......kww......","......wkwww.....",".....wwkwwww....","....wwwkwwwww...","...wwwwkwwwwww..","..wwwwwkwwwwwww.",".......k........","kkkkkkkkkkkkkkkk",".knnnnnnnnnnnnk.","..knnNnnnNnnnk..","...kkkkkkkkkk..."],
+  {k:'#2a1608',r:'#e8432e',w:'#f4ecd8',n:'#8a5a2b',N:'#5a3518'});
+ICON.starship=pixelSvg(["...kk...........","..kllkkkk.......","ekkllllllkkkk...","eellllllllllcck.","ekkllllllkkkk...","..kllkkkk.......","...kk..........."],{k:'#3a4458',l:'#c8d4e6',c:'#5cf2ff',e:'#ff9a2e'});
+// scarab, seen from above, two leg poses for walking (faces right)
+function scarab(f){const rows=[];for(let y=0;y<9;y++){let row='';for(let x=0;x<12;x++){
+  const body=((x-4.5)/3.6)**2+((y-4)/3.1)**2<=1,head=((x-9)/1.6)**2+((y-4)/1.5)**2<=1;
+  const legs=f?[[2,0],[6,0],[4,8],[8,8]]:[[4,0],[8,0],[2,8],[6,8]];
+  let c='.';if(body)c=(y===4?'g':(x+y<8?'L':'b'));else if(head)c='h';
+  if(legs.some(([a,b])=>a===x&&b===y))c='k';if(x===11&&(y===3||y===5))c='k';row+=c;}rows.push(row);}
+  return pixelSvg(rows,{b:'#2f5f9a',L:'#5b8fd0',g:'#e8b04a',h:'#1f3f6a',k:'#2a1a06'});}
+ICON.scarabA=scarab(0);ICON.scarabB=scarab(1);
 ICON.bat=pixelSvg(["k.........k","kk..k.k..kk","kkkkrkrkkkk",".kkk.k.kkk.","..k.....k.."],{k:'#c9c0e6',r:'#ff4a3a'});
 ICON.leaf=pixelSvg([".....g.","...gggg","..ggGgg",".ggGgg.",".gGgg..","gGgg...","k......"],{g:'#d98a2a',G:'#8a4a14',k:'#5a3a14'});
 ICON.sarc=pixelSvg(["..kkkk..",".kbbbbk.","kbyyyybk","kbykkybk","kbyyyybk",".kbyybk.",".kyyyyk.","kbbbbbbk","kyyyyyyk","kbbbbbbk","kyyyyyyk","kbbbbbbk",".kyyyyk.",".kbbbbk.","..kyyk..","...kk..."],{y:'#ffd27a',b:'#2f6f8a',k:'#2a1a06'});
@@ -769,7 +825,7 @@ function sfx(kind){
     const now=AC.currentTime;
     if((kind==='up'||kind==='down')&&performance.now()-lastSfx<45)return;
     lastSfx=performance.now();
-    const seq={roll:[[180,.03],[260,.03],[200,.03],[300,.03],[220,.03],[320,.03],[240,.04]],coin:[[1200,.04],[1500,.04],[1200,.04],[1500,.05]],up:[[660,.05]],down:[[220,.05]],undo:[[440,.05],[330,.06]],turn:[[523,.07],[784,.1]],
+    const seq={clash:[[1900,.03],[2600,.05],[1500,.07],[900,.1]],roll:[[180,.03],[260,.03],[200,.03],[300,.03],[220,.03],[320,.03],[240,.04]],coin:[[1200,.04],[1500,.04],[1200,.04],[1500,.05]],up:[[660,.05]],down:[[220,.05]],undo:[[440,.05],[330,.06]],turn:[[523,.07],[784,.1]],
       death:[[392,.12],[311,.12],[247,.14],[156,.3]],win:[[523,.1],[659,.1],[784,.1],[1047,.3]],revive:[[262,.08],[392,.08],[523,.14]],mark:[[880,.06]]}[kind]||[[440,.05]];
     let t=now;
     seq.forEach(([f,d])=>{
@@ -793,6 +849,16 @@ function pColors(p){if(!p.colors)p.colors=[p.color||COLORS[0]];return p.colors}
 function gradCss(cols){
   if(cols.length===1)return `linear-gradient(160deg, ${cols[0]}, ${shade(cols[0])})`;
   return `linear-gradient(160deg, ${cols.join(', ')})`;
+}
+// Background critters for some themes (fish, starships, a scarab)
+function ambientHtml(){
+  const R=(a,b)=>a+Math.random()*(b-a),th=S.theme;
+  if(th==='ocean')return [0,1,2].map(k=>{const rev=Math.random()<.5,d=R(11,19);
+    return `<span class="fish${rev?' rev':''}" style="top:${R(14,72)}%;--d:${d}s;animation-delay:-${R(0,d)}s;--s:${R(.7,1.25)}">${[ICON.fishA,ICON.fishB,ICON.fishC][k]}</span>`}).join('');
+  if(th==='space')return [0,1].map(k=>{const rev=Math.random()<.5,d=R(14,24);
+    return `<span class="sship${rev?' rev':''}" style="top:${R(12,70)}%;--d:${d}s;animation-delay:-${R(0,d)}s;--s:${k?.6:1}">${ICON.starship}</span>`}).join('');
+  if(th==='desert'){const d=R(22,32);return `<span class="scarab" style="top:${R(58,72)}%;--d:${d}s;animation-delay:-${R(0,d)}s"><i class="fa">${ICON.scarabA}</i><i class="fb">${ICON.scarabB}</i></span>`}
+  return '';
 }
 function bgCss(p){
   if(p.art&&p.art.url)return `url("${p.art.url}")`;
@@ -882,7 +948,7 @@ function render(){
     const t=document.createElement('div');
     t.className='tile';t.dataset.i=i;t.dataset.rot=pl.rot;
     t.style.gridRow=pl.row;t.style.gridColumn=`${pl.col} / span ${pl.span}`;
-    t.innerHTML=`<div class="inner">
+    t.innerHTML=`<div class="inner"><div class="amb">${ambientHtml()}</div>
       <div class="half minus">−</div><div class="half plus">+</div>
       <div class="banner">${ribbon('<span class="measure"></span><input class="name" size="1" maxlength="16" enterkeyhint="done" autocomplete="off">','',true)}</div>
       <div class="deckname"></div><div class="crown">${ICON.crown}</div><div class="xcounters"></div><div class="nolose" title="Can't lose for having 0 or less life">${ICON.ankh}</div><div class="outtag">OUT</div>
@@ -1364,6 +1430,7 @@ function die(i){
   else if(killer!==undefined)msg=fill(pick(DEATH_MSGS.cmd),esc(p.name),esc(S.players[srcOf(killer)].name));
   else msg=fill(pick(DEATH_MSGS.any),esc(p.name));
   p.dead=true;p.deathMsg=msg;p._confirm=false;p._fresh=true;sfx('death');
+  if(!S.theme||S.theme==='fantasy')setTimeout(()=>sfx('clash'),650);
   if(S.turn===i)passTurn();
   const pn=panelOf(i);if(pn)pn.classList.add('hidden');
   syncPanelState();
@@ -1431,8 +1498,10 @@ function deathFx(p){
 // Effects drawn across the whole fallen section (behind the reaper)
 function overlayFx(p){
   const th=S.theme;
+  if(th==='fantasy'||!th)return `<div class="fx-layer fx-fresh front"><span class="clash l">${ICON.bigsword}</span><span class="clash r">${ICON.bigsword}</span><span class="spark">${ICON.spark}</span></div>`;
   if(th==='haunted')return `<div class="fx-layer fx-fresh">${[[-38,-30],[34,-34],[-44,6],[42,10],[-20,-44],[18,-46],[0,-40]].map(([x,y],k)=>`<span class="bat" style="--dx:${x}cqmin;--dy:${y}cqmin;animation-delay:${(0.2+k*0.07).toFixed(2)}s">${ICON.bat}</span>`).join('')}</div>`;
   if(th==='volcano')return `<div class="fx-layer"><div class="lava"></div></div>`;
+  if(th==='ocean')return `<div class="fx-layer fx-fresh"><div class="ship">${ICON.ship}</div></div>`;
   if(th==='forest')return `<div class="fx-layer">${[6,22,40,58,74,90].map((l,k)=>`<span class="leaf" style="left:${l}%;animation-delay:${(k*0.7).toFixed(1)}s;filter:hue-rotate(${[0,-25,20,-10,30,-35][k]}deg)">${ICON.leaf}</span>`).join('')}</div>`;
   if(th==='arcane')return `<div class="fx-layer fx-fresh"><div class="rune">${ICON.rune}</div></div>`;
   if(th==='frost')return `<div class="fx-layer"><div class="ice"></div></div>`;
