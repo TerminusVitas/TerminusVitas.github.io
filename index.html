@@ -131,7 +131,7 @@ button{font-family:inherit;cursor:pointer}
 .seg button.on{background:#fff;color:#000;font-weight:700}
 .seg input::placeholder{color:#999}
 .note{font-size:12px;opacity:.55}
-.tools{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px}
 .tools button{border:0;border-radius:10px;padding:12px 6px;background:#2a2a33;color:#fff;font-size:14px}
 #result{min-height:24px;text-align:center;font-size:20px;font-weight:700}
 .danger{border:0;border-radius:12px;padding:12px;background:#4a1d1d;color:#ffb3b3;font-size:16px;font-weight:600}
@@ -180,7 +180,7 @@ button{font-family:inherit;cursor:pointer}
 .phead{background:var(--phead)}
 .note{color:var(--muted)}
 .stepper b,#result{font-family:var(--font);color:var(--text);text-shadow:2px 2px 0 #000}
-.stepper button,.seg button,.tools button,.danger,.primary,.search a,.coffee,.sharebtn,.xbtn,.pbtn,.pdone,.bgact,.sw,.fbtns button,.ptoggle button,.pconcede,.pmore,.profbtn,.histbtn,.theme-opts button{
+.stepper button,.seg button,.tools button,.danger,.primary,.search a,.coffee,.sharebtn,.bigbtn,.wnav button,.xbtn,.pbtn,.pdone,.bgact,.sw,.fbtns button,.ptoggle button,.pconcede,.pmore,.profbtn,.histbtn,.theme-opts button{
   background:var(--wood);border:3px solid var(--line);border-radius:0;clip-path:var(--notch);
   color:var(--text);font-family:var(--font);font-weight:700;text-shadow:2px 2px 0 #1a0f06;box-shadow:none;transition:transform .06s,filter .06s}
 .stepper button:active,.seg button:active,.tools button:active,.danger:active,.primary:active,.search a:active,.xbtn:active,.pbtn:active,.pdone:active,.bgact:active,.sw:active{transform:translateY(2px);filter:brightness(1.15)}
@@ -442,6 +442,47 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 .rthing.land{animation:land .35s ease-out}
 @keyframes land{0%{transform:scale(1.18)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.rthing.tumble,.rthing.flip,.rthing.flip .px{animation-duration:.01s!important}}
+.bigacts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bigbtn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 8px;font-size:16px}
+.bigbtn .px{width:22px;height:22px}
+.bigbtn.gold{background:var(--gold)!important;color:#3b2412!important;text-shadow:none!important}
+#welcome{position:fixed;inset:0;z-index:40;background:var(--page);display:flex;align-items:center;justify-content:center;padding:12px}
+.wcard{width:min(94vw,460px);max-height:96vh;max-height:96dvh;overflow:auto;background:var(--sheet);border:3px solid var(--sheetBorder);clip-path:var(--notch);padding:20px 18px;display:flex;flex-direction:column;gap:14px;color:var(--text)}
+.wlogo{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.wlogo .px{width:96px;height:96px}
+.wlogo h1{font:900 34px var(--font);color:var(--accent);text-shadow:3px 3px 0 #000}
+.wlogo p{font-size:15px;color:var(--muted);line-height:1.4}
+.wdots{display:flex;justify-content:center;gap:8px}
+.wdots span{width:10px;height:10px;background:var(--line);border:2px solid var(--sheetBorder)}
+.wdots span.on{background:var(--accent)}
+.wnames{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.wnames input{background:var(--well);border:3px solid var(--line);clip-path:var(--notch);color:var(--text);font:700 15px var(--font);padding:8px;min-width:0}
+.wnames input:focus{outline:0;border-color:var(--accent)}
+.wnav{display:flex;gap:8px}
+.wnav button{flex:1;padding:13px;font-size:17px}
+.wnav .primary{background:var(--gold)!important;color:#3b2412;text-shadow:none}
+.wcard .seg button{font-size:14px;padding:10px 4px;flex:1 1 40%;line-height:1.2}
+.wskip{background:none!important;border:0!important;clip-path:none!important;color:var(--muted)!important;text-decoration:underline;font:14px system-ui,sans-serif!important;text-shadow:none!important;align-self:center;padding:4px}
+.wcheck{display:flex;align-items:center;gap:10px;font:700 15px var(--font)}
+.wcheck input{width:22px;height:22px;accent-color:#ffd23f}
+.rbtn{background:none!important;border:0!important;clip-path:none!important;padding:2px 0;display:flex;justify-content:center;font-size:17px;cursor:pointer;transition:transform .08s,filter .15s}
+.rbtn .ribbon{margin-bottom:.35em}
+.rbtn:active{transform:translateY(2px) scale(.97)}
+.rbtn.big{font-size:22px}
+.rbtn.dim{filter:saturate(.55) brightness(.8)}
+.rbtn.sel{filter:drop-shadow(0 0 7px var(--accent))}
+.wnav{align-items:center;justify-content:center;gap:4px 14px;flex-wrap:wrap}
+.wnav .rbtn{flex:0 0 auto;padding:2px 0}
+.wopts{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 12px}
+.wgreet{font:700 16px var(--font);color:var(--muted);letter-spacing:.06em}
+.wreaper .px{width:104px;height:104px;animation:bob 2.4s ease-in-out infinite}
+.wicons{display:flex;gap:12px;justify-content:center}
+.wicons .px{width:26px;height:26px}
+.lcards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lcard{background:var(--well)!important;border:3px solid var(--line);clip-path:var(--notch);padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text);font:700 13px var(--font);cursor:pointer}
+.lcard svg{width:100%;max-width:118px;height:auto}
+.lcard.on{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent),0 0 12px rgba(255,210,63,.25);color:var(--accent)}
+.lcard:active{transform:translateY(2px)}
 </style>
 </head>
 <body>
@@ -451,6 +492,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 <button id="turnBtn" class="qbtn" aria-label="Pass turn"><i data-icon="hourglass"></i><span class="qnum"></span></button>
 <button id="dnBtn" class="qbtn hidden" aria-label="Day or night"></button>
 
+<div id="welcome" class="hidden"><div class="wcard" id="wcard"></div></div>
 <div id="rollPop" class="hidden"><div class="rcard">
   <div class="rtitle" id="rTitle"></div>
   <div class="rstage"><div class="rthing" id="rThing"></div><div class="rnum" id="rNum"></div></div>
@@ -460,6 +502,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 <div id="modal" class="hidden">
   <div class="sheet">
     <div class="shead"><h2 data-ribbon>Settings</h2><div class="shbtns"><button id="resetBtn" class="danger">Reset game</button><button class="xbtn" data-a="close" aria-label="Close"><i data-icon="close"></i></button></div></div>
+    <div class="bigacts"><button class="bigbtn gold" data-a="first"><i data-icon="crown"></i> Who goes first?</button><button class="bigbtn" id="setupBtn"><i data-icon="d20"></i> New game setup</button></div>
     <button class="pmore" id="howBtn">▾ How to use</button>
     <div class="howto hidden" id="howTo">
       <div class="hsec"><b>Life</b><p>Tap the left or right side of a player's area for −1 or +1. Hold for −10 or +10, and keep holding to keep going. The small number above the total shows the recent change.</p></div>
@@ -477,7 +520,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
     </div>
     <div class="row"><span data-ribbon>Turns</span>
       <div class="note" id="status"></div>
-      <div class="tools"><button data-a="pass"><i data-icon="hourglass"></i> Pass turn</button><button data-a="undo"><i data-icon="undo"></i> Undo</button><button data-a="first"><i data-icon="crown"></i> Random first</button></div>
+      <div class="tools"><button data-a="pass"><i data-icon="hourglass"></i> Pass turn</button><button data-a="undo"><i data-icon="undo"></i> Undo</button></div>
       <div class="note">The player whose turn it is glows gold.</div>
       <div class="ptoggle"><div class="plabel"><i data-icon="hourglass"></i> Hourglass button</div><button class="qbtog" data-qb="showTurn"></button></div>
       <div class="ptoggle"><div class="plabel"><i data-icon="undo"></i> Undo button</div><button class="qbtog" data-qb="showUndo"></button></div>
@@ -526,7 +569,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 10</div>
+    <div class="note fcp">Grim Tally · version 12</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -1439,14 +1482,7 @@ document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>
   if(a==='planar')openRoll('planar');
   if(a==='d20')openRoll('d20');
   if(a==='coin')openRoll('coin');
-  if(a==='first'){
-    const i=Math.floor(Math.random()*S.count);
-    closeModal();
-    board.querySelectorAll('.tile').forEach(t=>t.classList.remove('first'));
-    const t=tileEl(i);t.classList.add('first');
-    setTimeout(()=>t.classList.remove('first'),4000);
-    startTurns(i);
-  }
+  if(a==='first')openRoll('first');
   if(a==='close')closeModal();
 }));
 document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
@@ -1489,10 +1525,25 @@ document.getElementById('shareBtn').addEventListener('click',async()=>{
 // ---------- Dice & coin window ----------
 let rollKind='d20',rollTimer=null;
 function openRoll(kind){rollKind=kind;document.getElementById('rollPop').classList.remove('hidden');doRoll()}
-function closeRoll(){clearInterval(rollTimer);document.getElementById('rollPop').classList.add('hidden')}
+function closeRoll(){clearInterval(rollTimer);document.getElementById('rollPop').classList.add('hidden');if(rollKind==='first')closeModal()}
 function doRoll(){
   const thing=document.getElementById('rThing'),num=document.getElementById('rNum'),res=document.getElementById('rRes'),title=document.getElementById('rTitle'),again=document.getElementById('rAgain');
   clearInterval(rollTimer);res.textContent='';res.className='rres';num.textContent='';thing.className='rthing';void thing.offsetWidth;
+  if(rollKind==='first'){
+    const alive=aliveOrder();if(!alive.length)return;
+    title.textContent='Who goes first?';again.textContent='Pick again';sfx('roll');
+    thing.innerHTML=ICON.d20;thing.classList.add('tumble');
+    rollTimer=setInterval(()=>{res.textContent=S.players[alive[Math.floor(Math.random()*alive.length)]].name},90);
+    const i=alive[Math.floor(Math.random()*alive.length)];
+    setTimeout(()=>{
+      clearInterval(rollTimer);thing.className='rthing land';thing.innerHTML=ICON.crown;sfx('win');
+      res.textContent=S.players[i].name+' goes first!';res.classList.add('crit');
+      startTurns(i);
+      board.querySelectorAll('.tile').forEach(t=>t.classList.remove('first'));
+      const t=tileEl(i);if(t){t.classList.add('first');setTimeout(()=>t.classList.remove('first'),4500)}
+    },1000);
+    return;
+  }
   if(rollKind==='coin'){
     title.textContent='Coin flip';again.textContent='Flip again';sfx('coin');
     const heads=Math.random()<.5;let f=0;
@@ -1519,6 +1570,89 @@ function doRoll(){
 document.getElementById('rAgain').addEventListener('click',doRoll);
 document.getElementById('rDone').addEventListener('click',closeRoll);
 document.getElementById('rollPop').addEventListener('click',e=>{if(e.target.id==='rollPop')closeRoll()});
+// ---------- Welcome / new game setup ----------
+const WZ={step:0};
+function openWelcome(){
+  WZ.step=0;WZ.count=S.count;WZ.names=S.players.map(q=>q.name);WZ.start=S.teams?'2hg':String(S.start);
+  WZ.layout=['table','sides','upright','strips'].includes(S.layout)?S.layout:'table';WZ.theme=S.theme||'fantasy';WZ.first=true;
+  closeModal();document.getElementById('welcome').classList.remove('hidden');drawWelcome();
+}
+function closeWelcome(){S.welcomed=true;save();document.getElementById('welcome').classList.add('hidden')}
+function drawWelcome(){
+  const c=document.getElementById('wcard'),st=WZ.step;
+  const dots=`<div class="wdots">${[0,1,2].map(k=>`<span class="${k===st?'on':''}"></span>`).join('')}</div>`;
+  const nav=(back,next)=>`<div class="wnav">${back?`<button class="rbtn dim" data-w="back">${ribbon('Back')}</button>`:''}<button class="rbtn big" data-w="next">${ribbon(next)}</button></div>`;
+  let h='';
+  if(st===0){
+    h=`<div class="wlogo"><div class="wgreet">Welcome, traveler!</div><div class="wreaper">${ICON.reaper}</div><h1>Grim Tally</h1>
+      <div class="wicons">${ICON.d20}${ICON.swords}${ICON.crown}${ICON.poison}</div>
+      <p>The Reaper keeps score so you don't have to. Let's set up your table. It only takes a moment.</p></div>${dots}${nav(false,'Set up a game')}<button class="wskip" data-w="skip">Skip, use the last settings</button>`;
+  }else if(st===1){
+    while(WZ.names.length<WZ.count)WZ.names.push('Player '+(WZ.names.length+1));
+    const profs=loadProfiles();
+    h=`<div class="row"><span>${ribbon('Players')}</span>
+      <div class="stepper"><button data-w="pl-">−</button><b>${WZ.count}</b><button data-w="pl+">+</button></div>
+      <div class="wnames">${Array.from({length:WZ.count},(_,k)=>`<input data-n="${k}" maxlength="16" value="${esc(WZ.names[k]||'')}" placeholder="Player ${k+1}">`).join('')}</div>
+      ${profs.length?`<div class="note">Tap a saved profile to fill the next empty seat:</div><div class="proflist">${profs.map((q,k)=>`<button class="profbtn" data-prof="${k}">${esc(q.name)}</button>`).join('')}</div>`:''}</div>
+      <div class="row"><span>${ribbon('Format')}</span>
+      <div class="wopts">${[['40','Commander · 40'],['20','Standard · 20'],['30','30 life'],['2hg','Two-Headed Giant']].map(([v,l])=>`<button data-start="${v}" class="rbtn ${WZ.start===v?'sel':'dim'}">${ribbon(l)}</button>`).join('')}</div>
+      <div class="note">${WZ.start==='2hg'?'Teams of two share 30 life. Needs 4, 6 or 8 players.':'You can change the starting life any time in the menu.'}</div></div>
+      ${dots}${nav(true,'Next')}`;
+  }else{
+    h=`<div class="row"><span>${ribbon('Where is the phone?')}</span>
+      <div class="lcards">${[['table','Middle of the table'],['sides','Long table'],['upright','Facing me'],['strips','Facing me, rows']].map(([v,l])=>`<button data-lay="${v}" class="lcard ${WZ.layout===v?'on':''}">${layoutSvg(v,Math.min(Math.max(WZ.count,2),6))}<span>${l}</span></button>`).join('')}</div></div>
+      <div class="row"><span>${ribbon('Theme')}</span>
+      <div class="theme-opts">${Object.entries(THEMES).map(([k,t])=>`<button data-th="${k}" class="${k===WZ.theme?'on':''}"><span class="tsw" style="background:${t.sw}"></span>${t.label}</button>`).join('')}</div></div>
+      <label class="wcheck"><input type="checkbox" id="wFirst" ${WZ.first?'checked':''}> Pick a random first player</label>
+      ${dots}${nav(true,'Start game')}`;
+  }
+  c.innerHTML=h;
+  c.querySelectorAll('[data-n]').forEach(inp=>inp.addEventListener('input',()=>{WZ.names[+inp.dataset.n]=inp.value}));
+  c.querySelectorAll('[data-prof]').forEach(b=>b.addEventListener('click',()=>{
+    const q=loadProfiles()[+b.dataset.prof];if(!q)return;
+    let k=WZ.names.slice(0,WZ.count).findIndex((n,j)=>!n||n==='Player '+(j+1));if(k<0)k=WZ.count-1;
+    WZ.names[k]=q.name;(WZ.profs=WZ.profs||{})[k]=q;drawWelcome();
+  }));
+  c.querySelectorAll('[data-start]').forEach(b=>b.addEventListener('click',()=>{WZ.start=b.dataset.start;if(WZ.start==='2hg'&&(WZ.count<4||WZ.count%2))WZ.count=4;drawWelcome()}));
+  c.querySelectorAll('[data-lay]').forEach(b=>b.addEventListener('click',()=>{WZ.layout=b.dataset.lay;drawWelcome()}));
+  c.querySelectorAll('[data-th]').forEach(b=>b.addEventListener('click',()=>{WZ.theme=b.dataset.th;applyTheme(WZ.theme,true);drawWelcome()}));
+  const fc=c.querySelector('#wFirst');if(fc)fc.addEventListener('change',()=>{WZ.first=fc.checked});
+  c.querySelectorAll('[data-w]').forEach(b=>b.addEventListener('click',()=>{
+    const w=b.dataset.w;
+    if(w==='skip'){closeWelcome();return}
+    if(w==='back'){WZ.step--;drawWelcome();return}
+    if(w==='pl-'){const min=WZ.start==='2hg'?4:1;WZ.count=Math.max(min,WZ.count-(WZ.start==='2hg'?2:1));drawWelcome();return}
+    if(w==='pl+'){WZ.count=Math.min(8,WZ.count+(WZ.start==='2hg'?2:1));drawWelcome();return}
+    if(w==='next'){if(WZ.step<2){WZ.step++;drawWelcome()}else finishWelcome()}
+  }));
+}
+// Little picture of a phone on the table: seats as colored areas, numbers turned the way each seat faces,
+// and a pawn on the side of the phone where each player sits.
+function layoutSvg(layout,n){
+  const{cols,rows,P}=placements(n,layout),X=30,Y=16,W=60,H=108,cw=W/cols,ch=H/rows;
+  let g=`<rect x="${X-4}" y="${Y-5}" width="${W+8}" height="${H+10}" rx="9" fill="#0b0b0e" stroke="#8a7a62" stroke-width="2"/>`;
+  const pawns=[];
+  P.forEach(q=>{
+    const x=X+(q.col-1)*cw+1,y=Y+(q.row-1)*ch+1,w=q.span*cw-2,h=ch-2,cx=x+w/2,cy=y+h/2,col=COLORS[q.i%COLORS.length];
+    g+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${col}"/>`;
+    const fs=Math.max(7,Math.min(w,h,(q.rot%180?h:w))*.42);
+    g+=`<text x="${cx}" y="${cy}" transform="rotate(${q.rot} ${cx} ${cy})" font-size="${fs}" font-weight="900" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">40</text>`;
+    const pos=q.rot===180?[cx,Y-12]:q.rot===90?[X-14,cy]:q.rot===270?[X+W+14,cy]:[cx,Y+H+12];
+    pawns.push([pos[0],pos[1],col]);
+  });
+  pawns.forEach(([px,py,col])=>{g+=`<circle cx="${px}" cy="${py-3}" r="3.2" fill="${col}" stroke="#000" stroke-width="1"/><rect x="${px-4}" y="${py}" width="8" height="5" rx="2" fill="${col}" stroke="#000" stroke-width="1"/>`});
+  return `<svg viewBox="0 0 120 152" aria-hidden="true">${g}</svg>`;
+}
+function finishWelcome(){
+  S.count=WZ.count;syncPlayers();
+  S.players.forEach((q,k)=>{const n=(WZ.names[k]||'').trim();q.name=n||('Player '+(k+1));
+    const pr=WZ.profs&&WZ.profs[k];if(pr&&pr.name===q.name){q.deck=pr.deck||'';q.colors=(pr.colors||q.colors).slice();q.img=pr.img||null}});
+  S.teams=WZ.start==='2hg';S.start=S.teams?30:+WZ.start;S.layout=WZ.layout;
+  applyTheme(WZ.theme,false);
+  closeWelcome();resetGame();
+  if(WZ.first)openRoll('first');
+}
+document.getElementById('setupBtn').addEventListener('click',openWelcome);
 document.getElementById('undoBtn').addEventListener('click',undo);
 document.getElementById('turnBtn').addEventListener('click',passTurn);
 document.getElementById('dnBtn').addEventListener('click',()=>{mark(true);S.dayNight=S.dayNight==='day'?'night':'day';sfx('mark');refreshTable();save()});
@@ -1560,6 +1694,7 @@ document.querySelectorAll('[data-icon]').forEach(el=>{el.outerHTML=ICON[el.datas
 applyTheme(S.theme||'fantasy',false);
 document.body.classList.toggle('plainnums',!!S.plainNums);
 render();refreshTable();refreshUndo();
+if(!S.welcomed)openWelcome();
 // Offline support when hosted on its own website
 if('serviceWorker' in navigator&&location.protocol==='https:'){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{})});
