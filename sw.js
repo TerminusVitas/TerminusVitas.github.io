@@ -1,7 +1,7 @@
 // Grim Tally offline cache
 // Pages and code: always try the network first (so updates show up right away), fall back to the saved copy offline.
 // Images and fonts: use the saved copy, refresh it in the background.
-const CACHE='gt-v13';
+const CACHE='gt-v14';
 const SHELL=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','maskable-512.png','privacy.html'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL.map(u=>new Request(u,{cache:'reload'})))).then(()=>self.skipWaiting()));
@@ -12,7 +12,7 @@ self.addEventListener('activate',e=>{
 self.addEventListener('fetch',e=>{
   const req=e.request;if(req.method!=='GET')return;
   const url=new URL(req.url);
-  const fonts=url.hostname==='fonts.googleapis.com'||url.hostname==='fonts.gstatic.com';
+  const fonts=url.hostname==='fonts.googleapis.com'||url.hostname==='fonts.gstatic.com'||url.hostname==='cards.scryfall.io';
   if(url.origin!==location.origin&&!fonts)return;
   const isCode=req.mode==='navigate'||/\.(html|js|webmanifest|json)$/.test(url.pathname)||url.pathname.endsWith('/');
   if(isCode&&!fonts){

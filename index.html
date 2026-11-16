@@ -180,7 +180,7 @@ button{font-family:inherit;cursor:pointer}
 .phead{background:var(--phead)}
 .note{color:var(--muted)}
 .stepper b,#result{font-family:var(--font);color:var(--text);text-shadow:2px 2px 0 #000}
-.stepper button,.seg button,.tools button,.danger,.primary,.search a,.coffee,.sharebtn,.bigbtn,.wnav button,.xbtn,.pbtn,.pdone,.bgact,.sw,.fbtns button,.ptoggle button,.pconcede,.pmore,.profbtn,.histbtn,.theme-opts button{
+.artsearch button,.artpick,.stepper button,.seg button,.tools button,.danger,.primary,.search a,.coffee,.sharebtn,.bigbtn,.wnav button,.xbtn,.pbtn,.pdone,.bgact,.sw,.fbtns button,.ptoggle button,.pconcede,.pmore,.profbtn,.histbtn,.theme-opts button{
   background:var(--wood);border:3px solid var(--line);border-radius:0;clip-path:var(--notch);
   color:var(--text);font-family:var(--font);font-weight:700;text-shadow:2px 2px 0 #1a0f06;box-shadow:none;transition:transform .06s,filter .06s}
 .stepper button:active,.seg button:active,.tools button:active,.danger:active,.primary:active,.search a:active,.xbtn:active,.pbtn:active,.pdone:active,.bgact:active,.sw:active{transform:translateY(2px);filter:brightness(1.15)}
@@ -492,6 +492,18 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
   .tile.hascmd .inner .life{font-size:32cqh}
   .tile.hascmd .inner .center{transform:none}
 }
+.artcredit{font:600 10px system-ui,sans-serif;color:#fff;text-shadow:0 1px 2px #000,0 0 3px #000;padding:2px 6px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.9}
+.artcredit:empty{display:none}
+.tile.hasart .life,.tile.hasart .delta{text-shadow:0 0 6px #000,0 0 12px rgba(0,0,0,.8),3px 3px 0 #000}
+.artsearch{display:flex;gap:6px}
+.artsearch input{flex:1;min-width:0;background:var(--well);border:3px solid var(--line);clip-path:var(--notch);color:var(--text);font:700 15px var(--font);padding:8px}
+.artsearch button{padding:8px 12px;background:var(--gold)!important;color:#3b2412!important;text-shadow:none!important}
+.artgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.artpick{display:flex;flex-direction:column;gap:3px;background:var(--well)!important;padding:4px!important;text-align:left}
+.artpick img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.artpick b{font:700 11px var(--font);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.artpick i{font:10px system-ui,sans-serif;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:normal}
+.artpick.on{outline:3px solid var(--accent)}
 </style>
 </head>
 <body>
@@ -578,7 +590,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 13</div>
+    <div class="note fcp">Grim Tally · version 14</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -783,6 +795,7 @@ function gradCss(cols){
   return `linear-gradient(160deg, ${cols.join(', ')})`;
 }
 function bgCss(p){
+  if(p.art&&p.art.url)return `url("${p.art.url}")`;
   if(p.img)return `linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.45)), url("${p.img}")`;
   return gradCss(pColors(p));
 }
@@ -874,7 +887,7 @@ function render(){
       <div class="banner">${ribbon('<span class="measure"></span><input class="name" size="1" maxlength="16" enterkeyhint="done" autocomplete="off">','',true)}</div>
       <div class="deckname"></div><div class="crown">${ICON.crown}</div><div class="xcounters"></div><div class="nolose" title="Can't lose for having 0 or less life">${ICON.ankh}</div><div class="outtag">OUT</div>
       <div class="center"><div class="delta"></div><div class="life"></div></div>
-      <div class="chips"><div class="cmdrow"></div><div class="chiprow"><button class="chip c-poison" aria-label="Poison">${ICON.poison}<span></span></button><button class="chip c-cmd" aria-label="Commander damage">${ICON.swords}<span></span></button><button class="chip c-bg" aria-label="Background">${ICON.palette}</button></div></div>
+      <div class="chips"><div class="artcredit"></div><div class="cmdrow"></div><div class="chiprow"><button class="chip c-poison" aria-label="Poison">${ICON.poison}<span></span></button><button class="chip c-cmd" aria-label="Commander damage">${ICON.swords}<span></span></button><button class="chip c-bg" aria-label="Background">${ICON.palette}</button></div></div>
       <div class="panel hidden" data-i="${i}"></div><div class="fate hidden"></div></div>`;
     const name=t.querySelector('.name');
     name.value=p.name;
@@ -980,6 +993,8 @@ function updateTile(i){
   t.classList.toggle('hascmd',srcs.length>0);
   t.classList.toggle('dead',!!p.dead);
   t.classList.toggle('nolife',!!p.noLifeLoss);
+  t.classList.toggle('hasart',!!(p.art&&p.art.url));
+  t.querySelector('.artcredit').textContent=p.art&&p.art.url?`${p.art.name} · Art: ${p.art.artist} · ™ & © Wizards of the Coast`:'';
   t.classList.toggle('active',S.turn===i);
   schedulePlace();
   t.querySelector('.deckname').textContent=p.deck||'';
@@ -1208,6 +1223,12 @@ function openBgPanel(i){
     <div class="pfield swgroup"><b>Deck name</b><input class="deckin" maxlength="28" placeholder="Optional, shown under the name" value="${esc(p.deck||'')}"></div>
     <div class="swgroup"><b>Saved profiles</b><div class="proflist">${profs.map((q,k)=>`<button class="profbtn" data-p="${k}">${esc(q.name)}${q.deck?' · '+esc(q.deck):''}<span class="pdel" data-del="${k}">✕</span></button>`).join('')}
       <button class="profbtn add">+ Save ${esc(p.name)} as profile</button></div><div class="note">Profiles keep a name, deck and background so you can pick them next game.</div></div>
+    <div class="swgroup"><b>Card art (from Scryfall)</b>
+      <div class="artsearch"><input class="artq" placeholder="Card name, e.g. Avacyn" enterkeyhint="search" autocomplete="off"><button class="artgo">Search</button></div>
+      <div class="note artmsg">${p.art&&p.art.url?'Using art from '+esc(p.art.name)+' by '+esc(p.art.artist)+'.':'Search a card and tap its art to use it as this player\'s background.'}</div>
+      <div class="artgrid"></div>
+      ${p.art&&p.art.url?`<button class="bgact artclear">${ICON.close} Remove card art</button>`:''}
+    </div>
     <div class="swgroup"><b>Mana</b><div class="swatches">${sw(MONO,'m')}</div></div>
     <div class="swgroup"><b>Two colors</b><div class="swatches">${sw(GUILDS,'g')}</div></div>
     <div class="swgroup"><b>Three colors</b><div class="swatches">${sw(SHARDS,'s')}</div></div>
@@ -1229,21 +1250,46 @@ function openBgPanel(i){
     const del=e.target.closest('.pdel');
     if(del){const L=loadProfiles();L.splice(+del.dataset.del,1);saveProfiles(L);openBgPanel(i);return}
     const q=loadProfiles()[+b.dataset.p];if(!q)return;
-    mark(true);p.name=q.name;p.deck=q.deck||'';p.colors=(q.colors||[COLORS[0]]).slice();p.img=q.img||null;
+    mark(true);p.name=q.name;p.deck=q.deck||'';p.colors=(q.colors||[COLORS[0]]).slice();p.img=q.img||null;p.art=q.art||null;
     save();render();openBgPanel(i);
   }));
   panel.querySelector('.profbtn.add').addEventListener('click',()=>{
     const L=loadProfiles().filter(q=>q.name!==p.name);
-    L.push({name:p.name,deck:p.deck||'',colors:pColors(p).slice(),img:p.img||null});
+    L.push({name:p.name,deck:p.deck||'',colors:pColors(p).slice(),img:p.img||null,art:p.art||null});
     if(!saveProfiles(L)){L[L.length-1].img=null;saveProfiles(L);panel.querySelector('.bgmsg').textContent='Saved without the photo (not enough storage).'}
     openBgPanel(i);
   });
-  const setCols=cols=>{mark(true);p.colors=cols.slice();p.img=null;applyBg(i);save();openBgPanel(i)};
+  const setCols=cols=>{mark(true);p.colors=cols.slice();p.img=null;p.art=null;applyBg(i);updateTile(i);save();openBgPanel(i)};
+  // --- card art search (Scryfall) ---
+  const aq=panel.querySelector('.artq'),amsg=panel.querySelector('.artmsg'),agrid=panel.querySelector('.artgrid');
+  const runArt=async()=>{
+    const q=aq.value.trim();if(!q)return;
+    amsg.textContent='Searching…';agrid.innerHTML='';
+    try{
+      const res=await fetch('https://api.scryfall.com/cards/search?unique=art&order=released&q='+encodeURIComponent(q),{headers:{Accept:'application/json'}});
+      if(res.status===404){amsg.textContent='No cards found. Check the spelling, or try part of the name.';return}
+      if(!res.ok)throw new Error(res.status);
+      const j=await res.json();
+      const arts=(j.data||[]).map(c=>{const iu=c.image_uris||(c.card_faces&&c.card_faces[0]&&c.card_faces[0].image_uris)||{};
+        return{url:iu.art_crop,name:c.name,artist:c.artist||(c.card_faces&&c.card_faces[0].artist)||'Unknown',set:(c.set||'').toUpperCase()}}).filter(a=>a.url).slice(0,30);
+      if(!arts.length){amsg.textContent='No art found for that search.';return}
+      amsg.textContent=`${arts.length} art${arts.length>1?'s':''} found. Tap one to use it.`;
+      agrid.innerHTML=arts.map((a,k)=>`<button class="artpick" data-k="${k}"><img src="${a.url}" alt="" loading="lazy"><b>${esc(a.name)}</b><i>${esc(a.artist)} · ${esc(a.set)}</i></button>`).join('');
+      agrid.querySelectorAll('.artpick').forEach(b=>b.addEventListener('click',()=>{
+        const a=arts[+b.dataset.k];mark(true);p.art={url:a.url,name:a.name,artist:a.artist};p.img=null;
+        applyBg(i);updateTile(i);save();openBgPanel(i);
+      }));
+    }catch(e){amsg.textContent='Card art search needs an internet connection. (It works in the installed app, not inside Claude.)'}
+  };
+  panel.querySelector('.artgo').addEventListener('click',runArt);
+  aq.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();aq.blur();runArt()}});
+  const aclr=panel.querySelector('.artclear');
+  if(aclr)aclr.addEventListener('click',()=>{mark(true);p.art=null;applyBg(i);updateTile(i);save();openBgPanel(i)});
   panel.querySelectorAll('.sw').forEach(b=>b.addEventListener('click',()=>{
     const g=b.dataset.g,k=+b.dataset.k;
     setCols(g==='p'?[COLORS[k]]:groups[g][k][1]);
   }));
-  panel.querySelector('.bgcolor').addEventListener('input',e=>{p.colors=[e.target.value];p.img=null;applyBg(i)});
+  panel.querySelector('.bgcolor').addEventListener('input',e=>{p.colors=[e.target.value];p.img=null;p.art=null;applyBg(i);updateTile(i)});
   panel.querySelector('.bgcolor').addEventListener('change',()=>{save();openBgPanel(i)});
   const clr=panel.querySelector('.bgclear');
   if(clr)clr.addEventListener('click',()=>{p.img=null;applyBg(i);save();openBgPanel(i)});
@@ -1251,7 +1297,7 @@ function openBgPanel(i){
     const f=e.target.files&&e.target.files[0];if(!f)return;
     const msg=panel.querySelector('.bgmsg');msg.textContent='Loading…';
     shrinkImage(f,data=>{
-      const old=p.img;p.img=data;applyBg(i);
+      const old=p.img;p.img=data;p.art=null;applyBg(i);updateTile(i);
       if(!save()){p.img=old;applyBg(i);save();msg.textContent='Not enough storage for that photo. Try removing another player\'s photo.';return}
       openBgPanel(i);
     },()=>{msg.textContent='Couldn\'t read that image.'});
@@ -1653,7 +1699,7 @@ function layoutSvg(layout,n){
 function finishWelcome(){
   S.count=WZ.count;syncPlayers();
   S.players.forEach((q,k)=>{const n=(WZ.names[k]||'').trim();q.name=n||('Player '+(k+1));
-    const pr=WZ.profs&&WZ.profs[k];if(pr&&pr.name===q.name){q.deck=pr.deck||'';q.colors=(pr.colors||q.colors).slice();q.img=pr.img||null}});
+    const pr=WZ.profs&&WZ.profs[k];if(pr&&pr.name===q.name){q.deck=pr.deck||'';q.colors=(pr.colors||q.colors).slice();q.img=pr.img||null;q.art=pr.art||null}});
   S.teams=WZ.start==='2hg';S.start=S.teams?30:+WZ.start;S.layout=WZ.layout;
   applyTheme(WZ.theme,false);
   closeWelcome();resetGame();
