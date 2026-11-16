@@ -590,6 +590,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 .fate.settled .vein{animation:none;stroke-dashoffset:0}
 @keyframes veinGrow{to{stroke-dashoffset:0}}
 @keyframes vnode{0%{opacity:0}40%{opacity:1;filter:drop-shadow(0 0 3px #ff3a2a)}100%{opacity:.35}}
+.amb>.crit{animation-iteration-count:1;animation-delay:0s;animation-fill-mode:both}
 </style>
 </head>
 <body>
@@ -676,7 +677,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 20</div>
+    <div class="note fcp">Grim Tally · version 21</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -935,19 +936,38 @@ function gradCss(cols){
   return `linear-gradient(160deg, ${cols.join(', ')})`;
 }
 // Background critters for some themes (fish, starships, a scarab)
-function ambientHtml(){
-  // critters show up now and then: each crosses during a short part of a long cycle
-  const R=(a,b)=>a+Math.random()*(b-a),th=S.theme,go=d=>`--d:${d}s;animation-delay:-${R(0,d).toFixed(1)}s`;
-  const walker=(cls,a,b,d,extra='')=>`<span class="walker ${cls}" style="top:${R(56,70)}%;${go(d)}"><i class="fa">${a}</i><i class="fb">${b}</i>${extra}</span>`;
-  if(th==='ocean')return [0,1].map(k=>{const rev=Math.random()<.5;
-    return `<span class="fish${rev?' rev':''}" style="top:${R(14,72)}%;${go(R(30,46))};--s:${R(.7,1.25)}">${[ICON.fishA,ICON.fishB,ICON.fishC][Math.floor(Math.random()*3)]}</span>`}).join('');
-  if(th==='space')return [0,1].map(k=>{const rev=Math.random()<.5;
-    return `<span class="sship${rev?' rev':''}" style="top:${R(12,70)}%;${go(R(36,56))};--s:${k?.6:1}">${ICON.starship}</span>`}).join('');
-  if(th==='haunted')return [0,1].map(k=>`<span class="spider" style="left:${R(12,88)}%;--drop:${R(25,55)}cqh;${go(R(26,40))}"><i class="thread"></i><i class="sp sa">${ICON.spider}</i><i class="sp sb">${ICON.spider2}</i></span>`).join('');
-  if(th==='forest')return `<span class="squirrel" style="top:${R(60,72)}%;${go(R(44,60))}"><span class="hop"><i class="fa">${ICON.squirrelA}</i><i class="fb">${ICON.squirrelB}</i></span></span>`;
-  if(th==='fantasy'||!th)return walker('wizard',ICON.wizA,ICON.wizB,R(80,100),`<i class="wspark">${ICON.spark}</i>`)+walker('knight',ICON.knA,ICON.knB,R(90,115))+walker('princess',ICON.prA,ICON.prB,R(100,125));
-  if(th==='desert')return `<span class="scarab" style="top:${R(58,72)}%;${go(R(55,75))}"><i class="fa">${ICON.scarabA}</i><i class="fb">${ICON.scarabB}</i></span><span class="snake" style="top:${R(68,76)}%;${go(R(60,85))}"><i class="fa">${ICON.snakeA}</i><i class="fb">${ICON.snakeB}</i></span>`;
-  return '';
+function ambientHtml(){return ''}
+// Background critters: one at a time across the whole table. A critter is dropped into a
+// random living seat, crosses once, then the next one appears after a short pause.
+// frac = share of the keyframe cycle in which the critter is on screen.
+const CRITTERS=(()=>{
+  const R=(a,b)=>a+Math.random()*(b-a);
+  const walker=(cls,a,b,d,extra='')=>({d,frac:.41,html:`<span class="crit walker ${cls}" style="top:${R(56,70)}%;--d:${d}s"><i class="fa">${a}</i><i class="fb">${b}</i>${extra}</span>`});
+  return{
+    fantasy:[()=>walker('wizard',ICON.wizA,ICON.wizB,R(80,100),`<i class="wspark">${ICON.spark}</i>`),()=>walker('knight',ICON.knA,ICON.knB,R(90,110)),()=>walker('princess',ICON.prA,ICON.prB,R(100,120))],
+    ocean:[()=>{const d=R(30,46);return{d,frac:.4,html:`<span class="crit fish${Math.random()<.5?' rev':''}" style="top:${R(14,72)}%;--d:${d}s;--s:${R(.7,1.25)}">${[ICON.fishA,ICON.fishB,ICON.fishC][Math.floor(Math.random()*3)]}</span>`}}],
+    space:[()=>{const d=R(36,56);return{d,frac:.18,html:`<span class="crit sship${Math.random()<.5?' rev':''}" style="top:${R(12,70)}%;--d:${d}s;--s:${R(.6,1)}">${ICON.starship}</span>`}}],
+    haunted:[()=>{const d=R(26,40);return{d,frac:.45,html:`<span class="crit spider" style="left:${R(12,88)}%;--drop:${R(25,55)}cqh;--d:${d}s"><i class="thread"></i><i class="sp sa">${ICON.spider}</i><i class="sp sb">${ICON.spider2}</i></span>`}}],
+    forest:[()=>{const d=R(44,60);return{d,frac:.36,html:`<span class="crit squirrel" style="top:${R(60,72)}%;--d:${d}s"><span class="hop"><i class="fa">${ICON.squirrelA}</i><i class="fb">${ICON.squirrelB}</i></span></span>`}}],
+    desert:[()=>{const d=R(55,75);return{d,frac:.44,html:`<span class="crit scarab" style="top:${R(58,72)}%;--d:${d}s"><i class="fa">${ICON.scarabA}</i><i class="fb">${ICON.scarabB}</i></span>`}},
+            ()=>{const d=R(60,85);return{d,frac:.44,html:`<span class="crit snake" style="top:${R(68,76)}%;--d:${d}s"><i class="fa">${ICON.snakeA}</i><i class="fb">${ICON.snakeB}</i></span>`}}],
+  };
+})();
+let critTimer=null,critEl=null;
+function startCritters(delay=3000){
+  clearTimeout(critTimer);if(critEl){critEl.remove();critEl=null}
+  critTimer=setTimeout(spawnCritter,delay);
+}
+function spawnCritter(){
+  const list=CRITTERS[S.theme||'fantasy'];if(!list)return;
+  let still=false;try{still=matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
+  if(still)return;
+  const ambs=[...document.querySelectorAll('#board .tile:not(.dead) .amb')];
+  if(!ambs.length||document.hidden){critTimer=setTimeout(spawnCritter,5000);return}
+  const c=list[Math.floor(Math.random()*list.length)]();
+  const amb=ambs[Math.floor(Math.random()*ambs.length)];
+  amb.insertAdjacentHTML('beforeend',c.html);const el=critEl=amb.lastElementChild;
+  critTimer=setTimeout(()=>{el.remove();if(critEl===el)critEl=null;critTimer=setTimeout(spawnCritter,6000+Math.random()*8000)},c.d*c.frac*1000+400);
 }
 function bgCss(p){
   if(p.art&&p.art.url)return `url("${p.art.url}")`;
@@ -1922,6 +1942,7 @@ function applyTheme(name,rerender){
   seg.innerHTML=Object.entries(THEMES).map(([k,t])=>`<button data-theme="${k}" class="${k===name?'on':''}"><span class="tsw" style="background:${t.sw}"></span>${t.label}</button>`).join('');
   seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{applyTheme(b.dataset.theme,true);save()}));
   if(rerender){render();refreshTable()}
+  startCritters();
   try{document.fonts.ready.then(()=>board.querySelectorAll('.tile').forEach(t=>t._fit&&t._fit()))}catch(e){}
 }
 document.querySelectorAll('[data-icon]').forEach(el=>{el.outerHTML=ICON[el.dataset.icon]});
