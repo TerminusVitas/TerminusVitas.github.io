@@ -592,7 +592,7 @@ body.plainnums .life,body.plainnums .delta,body.plainnums .cbadge,body.plainnums
 @keyframes veinGrow{to{stroke-dashoffset:0}}
 @keyframes vnode{0%{opacity:0}40%{opacity:1;filter:drop-shadow(0 0 3px #ff3a2a)}100%{opacity:.35}}
 .amb>.crit{animation-iteration-count:1;animation-delay:0s;animation-fill-mode:both}
-.wscroll{width:min(94vw,460px);max-height:96vh;max-height:96dvh;display:flex;flex-direction:column;filter:drop-shadow(0 8px 14px rgba(0,0,0,.65));animation:unroll .55s ease-out both;
+.wscroll{width:min(94vw,460px);max-height:96vh;max-height:96dvh;display:flex;flex-direction:column;filter:drop-shadow(0 8px 14px rgba(0,0,0,.65));
   --scBg:linear-gradient(90deg,rgba(120,80,30,.35),transparent 9%,transparent 91%,rgba(120,80,30,.35)),radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.35),transparent 60%),linear-gradient(#e8cf98,#f4e3b8 12%,#f6e8c2 50%,#f1dcaa 88%,#e2c48a);
   --scEdge:#8a6230;--scGlow:none;--rod:linear-gradient(#6a3e1a,#c8955a 28%,#f2d6a0 42%,#d8ac6a 58%,#8a5a2a 80%,#4a2810);--rodB:#2a1606;
   --knob:linear-gradient(90deg,#3a1e0a,#8a5226 45%,#3a1e0a);--knobB:#1a0c02;
@@ -643,6 +643,32 @@ body.theme-phyrexian .wscroll{--scBg:linear-gradient(100deg,transparent 46%,rgba
   --scEdge:#2a2a2e;--rod:linear-gradient(#0a0a0c,#4a4a52 30%,#8a8a94 45%,#3a3a42 65%,#08080a);--rodB:#000;--knob:linear-gradient(90deg,#1a0404,#c8302a 50%,#1a0404);--knobB:#000;
   --ink1:#161616;--ink2:#4a4a4a;--inkA:#a8201a;--h1:#8a1010;--h1sh:0 0 6px rgba(232,67,46,.35),2px 2px 0 rgba(0,0,0,.2);--sline:#a8a69c;--swell:#fbfaf6}
 @media (prefers-reduced-motion:reduce){.wscroll{animation:none}}
+/* ---- opening animations ---- */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes menuPop{0%{opacity:0;transform:translateY(18px) scale(.9)}65%{opacity:1;transform:translateY(-3px) scale(1.015)}100%{opacity:1;transform:none}}
+@keyframes panelIn{0%{opacity:0;transform:scale(.94)}100%{opacity:1;transform:none}}
+@keyframes dropIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes tileIn{0%{opacity:0;transform:scale(.86)}70%{opacity:1;transform:scale(1.02)}100%{opacity:1;transform:none}}
+#modal{animation:fadeIn .2s ease-out both}
+#modal .sheet{animation:menuPop .34s cubic-bezier(.2,.8,.3,1) both}
+#rollPop{animation:fadeIn .18s ease-out both}
+#rollPop .rcard{animation:menuPop .3s cubic-bezier(.2,.8,.3,1) both}
+.pcell.on{animation:fadeIn .18s ease-out both}
+.pcell .panel:not(.hidden){animation:panelIn .26s cubic-bezier(.2,.8,.3,1) both}
+.howto:not(.hidden){animation:dropIn .25s ease-out both}
+
+#welcome .wscroll{animation:unroll .6s cubic-bezier(.3,.7,.3,1) .15s both}
+#welcome .wcard>*{animation:dropIn .35s ease-out .55s both}
+#welcome .wcard>*:nth-child(2){animation-delay:.62s}#welcome .wcard>*:nth-child(3){animation-delay:.69s}
+#welcome .wcard>*:nth-child(4){animation-delay:.76s}#welcome .wcard>*:nth-child(n+5){animation-delay:.83s}
+#welcome.stepped .wscroll{animation:none}
+#welcome.stepped .wcard>*{animation-delay:0s!important;animation-duration:.25s}
+body.intro #board .tile{animation:tileIn .5s cubic-bezier(.2,.8,.3,1) both}
+body.intro #board .tile:nth-child(2){animation-delay:.07s}body.intro #board .tile:nth-child(3){animation-delay:.14s}
+body.intro #board .tile:nth-child(4){animation-delay:.21s}body.intro #board .tile:nth-child(5){animation-delay:.28s}
+body.intro #board .tile:nth-child(6){animation-delay:.35s}body.intro #board .tile:nth-child(n+7){animation-delay:.42s}
+body.intro .menubtn,body.intro #menuBtn{animation:fadeIn .4s ease-out .5s both}
+@media (prefers-reduced-motion:reduce){#modal,#modal .sheet,#rollPop,#rollPop .rcard,.pcell.on,.pcell .panel,.howto,#welcome,#welcome .wscroll,#welcome .wcard>*,body.intro #board .tile,body.intro #menuBtn{animation:none!important}}
 </style>
 </head>
 <body>
@@ -729,7 +755,7 @@ body.theme-phyrexian .wscroll{--scBg:linear-gradient(100deg,transparent 46%,rgba
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 24</div>
+    <div class="note fcp">Grim Tally · version 25</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -1876,10 +1902,13 @@ const WZ={step:0};
 function openWelcome(){
   WZ.step=0;WZ.count=S.count;WZ.names=S.players.map(q=>q.name);WZ.start=S.teams?'2hg':String(S.start);
   WZ.layout=['table','sides','upright','strips'].includes(S.layout)?S.layout:'table';WZ.theme=S.theme||'fantasy';WZ.first=true;
-  closeModal();document.getElementById('welcome').classList.remove('hidden');drawWelcome();
+  closeModal();const wl=document.getElementById('welcome');wl.classList.remove('stepped');wl.dataset.drawn='0';wl.classList.remove('hidden');drawWelcome();
 }
-function closeWelcome(){S.welcomed=true;save();document.getElementById('welcome').classList.add('hidden')}
+function closeWelcome(){S.welcomed=true;save();document.getElementById('welcome').classList.add('hidden');playIntro()}
+// the table's seats pop in one after another when the app opens
+function playIntro(){const b=document.body;b.classList.remove('intro');void b.offsetWidth;b.classList.add('intro');clearTimeout(playIntro.t);playIntro.t=setTimeout(()=>b.classList.remove('intro'),1400)}
 function drawWelcome(){
+  const wl=document.getElementById('welcome');if(wl.dataset.drawn==='1')wl.classList.add('stepped');wl.dataset.drawn='1';
   const c=document.getElementById('wcard'),st=WZ.step;
   const dots=`<div class="wdots">${[0,1,2].map(k=>`<span class="${k===st?'on':''}"></span>`).join('')}</div>`;
   const nav=(back,next)=>`<div class="wnav">${back?`<button class="rbtn dim" data-w="back">${ribbon('Back')}</button>`:''}<button class="rbtn big" data-w="next">${ribbon(next)}</button></div>`;
@@ -2001,7 +2030,7 @@ document.querySelectorAll('[data-icon]').forEach(el=>{el.outerHTML=ICON[el.datas
 applyTheme(S.theme||'fantasy',false);
 document.body.classList.toggle('plainnums',!!S.plainNums);
 render();refreshTable();refreshUndo();
-if(!S.welcomed)openWelcome();
+if(!S.welcomed)openWelcome();else playIntro();
 // Offline support when hosted on its own website
 if('serviceWorker' in navigator&&location.protocol==='https:'){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{})});
