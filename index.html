@@ -828,6 +828,59 @@ body.theme-void .wscroll{--scBg:radial-gradient(circle at 50% 42%,#000 0 14%,rgb
   --scEdge:#6a4ad0;--scGlow:inset 0 0 26px rgba(106,74,208,.25),0 0 12px rgba(106,74,208,.35);--rod:linear-gradient(#000,#2a2240 35%,#4a3a6a 48%,#1a1428 65%,#000);--rodB:#000;--knob:linear-gradient(90deg,#000,#9a6aff 50%,#000);--knobB:#000;
   --ink1:#e8e4f4;--ink2:#8a84a0;--inkA:#9a6aff;--h1:#c8b0ff;--h1sh:0 0 12px rgba(154,106,255,.8);--sline:#2a2040;--swell:#020104}
 body.theme-neon .wscroll,body.theme-mine .wscroll,body.theme-void .wscroll{--reapGlow:drop-shadow(0 0 6px rgba(255,255,255,.45))}
+/* ---- upgraded deaths: volcano eruption, frost shatter, arcane portal ---- */
+.erupt{position:absolute;left:50%;bottom:0;width:30%;height:100%;transform-origin:50% 100%;transform:translateX(-50%) scaleY(0);
+  background:radial-gradient(ellipse at 50% 100%,#fff2a0 0 12%,#ffb84a 30%,rgba(255,90,20,.85) 55%,transparent 72%);animation:erupt 1.2s ease-out .2s both}
+@keyframes erupt{0%{transform:translateX(-50%) scaleY(0);opacity:1}30%{transform:translateX(-50%) scaleY(1);opacity:1}100%{transform:translateX(-50%) scaleY(.4);opacity:0}}
+.lbomb{position:absolute;left:50%;bottom:4%;width:calc(6cqmin*var(--s));height:calc(6cqmin*var(--s));border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#fff2a0,#ff8a2e 45%,#b8301a);box-shadow:0 0 3cqmin #ff7a2e;animation:lbomb 1.3s cubic-bezier(.2,.6,.6,1) both}
+@keyframes lbomb{0%{transform:translate(0,0);opacity:0}8%{opacity:1}50%{transform:translate(calc(var(--dx)*.6),var(--dy))}100%{transform:translate(var(--dx),30cqh);opacity:0}}
+.lava.low{height:18%;animation-delay:1.1s,2.7s}
+.charred{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 115%,rgba(255,110,30,.4),transparent 55%),linear-gradient(transparent 35%,rgba(18,7,3,.6));animation:fadeIn 1s ease-out 1s both}
+.smk{position:absolute;bottom:12%;width:14cqmin;height:14cqmin;border-radius:50%;background:radial-gradient(circle,rgba(70,60,56,.55),transparent 70%);animation:smoke 3.3s ease-out infinite both}
+@keyframes smoke{0%{transform:translate(-50%,0) scale(.4);opacity:0}20%{opacity:.8}100%{transform:translate(-30%,-60cqh) scale(2.2);opacity:0}}
+.fate.settled .charred{animation:none}
+.ice.late{animation-delay:1.5s}
+.frostin{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 25%,rgba(220,245,255,.75) 75%);box-shadow:inset 0 0 6cqmin #fff;animation:frostIn 1.4s ease-out both}
+@keyframes frostIn{0%{opacity:0;transform:scale(1.15)}60%{opacity:1;transform:none}85%{opacity:1}100%{opacity:0}}
+.cracks{position:absolute;inset:0;width:100%;height:100%}
+.crack{fill:none;stroke:rgba(255,255,255,.9);stroke-width:2px;vector-effect:non-scaling-stroke;stroke-dasharray:80;stroke-dashoffset:80;animation:veinGrow .35s ease-out .9s forwards;filter:drop-shadow(0 0 1px #9fd8ff)}
+.fate.settled .crack{animation:none;stroke-dashoffset:0}
+.shard{position:absolute;width:34%;height:34%;background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(190,230,252,.7));opacity:0;animation:shard 2.1s ease-in both}
+@keyframes shard{0%,45%{opacity:0;transform:none}55%,62%{opacity:.9;transform:none}100%{opacity:0;transform:translate(var(--dx),calc(var(--dy) + 60cqh)) rotate(var(--r))}}
+.portal{position:absolute;left:50%;top:45%;width:72cqmin;height:72cqmin;transform:translate(-50%,-50%) scale(0);animation:portalOpen .9s cubic-bezier(.3,1.5,.5,1) .3s both;filter:drop-shadow(0 0 4cqmin rgba(159,232,255,.7))}
+.portal i{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#9fe8ff,#7a5fd0,#c22a8a,#3a1f66,#7a5fd0,#9fe8ff);
+  -webkit-mask:radial-gradient(circle,transparent 36%,#000 41%,#000 64%,transparent 70%);mask:radial-gradient(circle,transparent 36%,#000 41%,#000 64%,transparent 70%);animation:spinR 2.4s linear infinite}
+.portal b{position:absolute;inset:24%;border-radius:50%;background:radial-gradient(circle,#05020e 0 45%,#1a0838 75%,transparent)}
+@keyframes portalOpen{from{transform:translate(-50%,-50%) scale(0)}to{transform:translate(-50%,-50%) scale(1)}}
+@keyframes spinR{to{transform:rotate(360deg)}}
+.fate.settled .portal{animation:none;transform:translate(-50%,-50%) scale(1)}
+.suck.arc{background:#9fe8ff;box-shadow:0 0 2cqmin #9fe8ff;top:45%}
+/* ---- upgraded critters ---- */
+.salamander{position:absolute;left:0;width:18cqmin;height:6.8cqmin;animation:crawl var(--d) linear infinite;filter:drop-shadow(0 0 1.5cqmin rgba(255,120,30,.6))}
+.penguin{position:absolute;left:0;width:9cqmin;height:11cqmin;animation:wander var(--d) linear infinite}
+.penguin .wob{position:absolute;inset:0;transform-origin:50% 100%;animation:waddle .5s ease-in-out infinite alternate}
+@keyframes waddle{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+.spellbook{position:absolute;left:0;width:12cqmin;height:8cqmin;animation:bookDrift var(--d) ease-in-out infinite;filter:drop-shadow(0 0 2cqmin rgba(159,232,255,.7))}
+@keyframes bookDrift{0%{transform:translate(-20cqw,0)}10%{transform:translate(10cqw,-4cqh)}20%{transform:translate(40cqw,3cqh)}30%{transform:translate(70cqw,-4cqh)}41%,100%{transform:translate(125cqw,0)}}
+.mite{position:absolute;left:0;width:11cqmin;height:6.6cqmin;animation:scurry var(--d) linear infinite}
+.salamander i,.penguin i,.spellbook i,.mite i{position:absolute;inset:0}
+.salamander .px,.penguin .px,.spellbook .px,.mite .px{width:100%;height:100%;display:block}
+.salamander .fb{animation:legs .3s steps(1) infinite}.salamander .fa{animation:legs .3s steps(1) -.15s infinite}
+.penguin .fb{animation:legs .5s steps(1) infinite}.penguin .fa{animation:legs .5s steps(1) -.25s infinite}
+.spellbook .fb{animation:legs .45s steps(1) infinite}.spellbook .fa{animation:legs .45s steps(1) -.225s infinite}
+.mite .fb{animation:legs .12s steps(1) infinite}.mite .fa{animation:legs .12s steps(1) -.06s infinite}
+/* ---- fantasy (the default theme): drifting dust motes and warm torchlight ---- */
+body:not([class*="theme-"]) .inner::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.7;
+  background-image:radial-gradient(1.4px 1.4px at 20px 30px,rgba(255,230,170,.9),transparent),radial-gradient(1px 1px at 80px 90px,rgba(255,240,200,.8),transparent),radial-gradient(1.8px 1.8px at 130px 40px,rgba(255,215,140,.7),transparent),
+    radial-gradient(1.2px 1.2px at 60px 150px,rgba(255,235,190,.8),transparent);
+  background-size:160px 180px;animation:motes 22s linear infinite}
+@keyframes motes{from{background-position:0 0}to{background-position:60px -180px}}
+body:not([class*="theme-"]) .inner::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 0% 0%,rgba(255,160,60,.2),transparent 70%),radial-gradient(ellipse 70% 60% at 100% 100%,rgba(255,150,50,.16),transparent 70%);
+  animation:torch 2.6s steps(5) infinite}
+@keyframes torch{0%,100%{opacity:.85}20%{opacity:1}45%{opacity:.7}70%{opacity:.95}}
+@media (prefers-reduced-motion:reduce){body:not([class*="theme-"]) .inner::before,body:not([class*="theme-"]) .inner::after{animation:none}}
 </style>
 </head>
 <body>
@@ -917,7 +970,7 @@ body.theme-neon .wscroll,body.theme-mine .wscroll,body.theme-void .wscroll{--rea
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 29</div>
+    <div class="note fcp">Grim Tally · version 30</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -1024,6 +1077,24 @@ const RKP={k:'#1a1612',l:'#b0a898',m:'#7a7064',d:'#4a4238',o:'#ffb84a'};
 ICON.rock=pixelSvg(["..kkkk..",".kllmmk.","klmmmmdk","kmmmmmdk","kmmmmddk",".kddddk.","..kkkk.."],RKP);ICON.rockO=pixelSvg(["..kkkk..",".kllmmk.","klmomodk","kmmmmodk","komommdk",".kddddk.","..kkkk.."],RKP);
 const HRP={k:'#1a0a2a',p:'#4a2a7a',w:'#e8e4f4',r:'#c8304a'};
 ICON.horrorA=pixelSvg(["...kkkkkk...",".kkppppppkk.","kppppppppppk","kpppwwwwpppk","kppwwrrwwppk","kpppwwwwpppk",".kppppppppk.","..p.p.p.p...",".p..p..p.p..",".p.p..p...p.","..p..p..p.p.","..p.p..p..p.","...p...p.p..","...p....p..."],HRP);ICON.horrorB=pixelSvg(["...kkkkkk...",".kkppppppkk.","kppppppppppk","kpppwwwwpppk","kppwwrrwwppk","kpppwwwwpppk",".kppppppppk.","...p.p.p.p..","..p..p..p.p.","..p.p..p..p.",".p..p.p..p..",".p.p...p.p..","..p...p..p..","..p....p...."],HRP);
+
+// ---- critters added for volcano, frost, arcane and Phyrexian ----
+const SALP={o:'#e8501a',y:'#ffcf3a',e:'#1a0602',l:'#b8301a'};
+ICON.salA=outlined(["...........ooo..","ooo.......ooooeo",".ooooooooooooooo","..oyoooyoooyoo..","...ll.....ll....","..l..l...l..l..."],SALP,'#2a0802');ICON.salB=outlined(["...........ooo..","yoo.......ooooeo",".ooooooooooooooo","..oyoooyoooyoo..","....ll...ll.....","....ll...ll....."],SALP,'#2a0802');
+const PENP={k:'#1a1f2a',w:'#ffffff',o:'#ffa020'};
+ICON.penA=outlined(["...kkkk..","..kkkkwk.","..kkkwwko",".kkkwwww.",".kkwwwww.","kkkwwwww.","kkkwwwww.",".kkwwwww.",".kkkwwwk.","..kkkkk..","..oo..oo."],PENP,'#0a0e14');ICON.penB=outlined(["...kkkk..","..kkkkwk.","..kkkwwko",".kkkwwww.",".kkwwwww.","kkkwwwww.","kkkwwwww.",".kkwwwww.",".kkkwwwk.","..kkkkk..","...ooo..."],PENP,'#0a0e14');
+const BOOKP={k:'#1a0d36',w:'#f4ecd8',l:'#8a7a9a',c:'#5a3aa0',y:'#ffd23f'};
+ICON.bookA=pixelSvg(["............",".kkkkkkkkkk.","kwwwwkkwwwwk","kwlwwkkwwlwk","kwwlwkkwlwwk","kwwwwkkwwwwk","kccccyycccck",".kkkkkkkkkk."],BOOKP);ICON.bookB=pixelSvg(["..kk....kk..",".kwwk..kwwk.","kwwlwkkwlwwk","kwlwwkkwwlwk","kwwwwkkwwwwk","kccccyycccck",".kkkkkkkkkk.","............"],BOOKP);
+const MITEP={w:'#e8e2d6',k:'#111111',r:'#e8432e'};
+ICON.miteA=outlined(["...wwww...","..wwwwwww.",".wwkwwkwwr",".kkkkkkkk.","k.k..k.k..","k..k..k.k."],MITEP,'#000000');ICON.miteB=outlined(["...wwww...","..wwwwwww.",".wwkwwkwwr",".kkkkkkkk.",".k.k.k..k.",".k..k.k..k"],MITEP,'#000000');
+// frost death: cracks that branch out from the middle (fixed seed so redraws match)
+function cracksSvg(){
+  let seed=5;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};let d='';
+  for(let k=0;k<8;k++){let a=k/8*Math.PI*2+rnd()*.5,x=50,y=50,pts=[[x,y]];
+    for(let j=0;j<6;j++){a+=(rnd()-.5)*.8;x+=Math.cos(a)*(6+rnd()*5);y+=Math.sin(a)*(6+rnd()*5);pts.push([x,y])}
+    d+=`<polyline points="${pts.map(q=>q.map(v=>v.toFixed(1)).join(',')).join(' ')}" class="crack"/>`}
+  return `<svg class="cracks" viewBox="0 0 100 100" preserveAspectRatio="none">${d}</svg>`;
+}
 
 const PR=['....y.y.y...', '....yyyyy...', '...hhhhhhh..', '...hsssssh..', '...hsesesh..', '...hsssssh..', '...hhsssh...', '...kpppppk..', '..kspppppsk.', '...kpPpPpk..', '..kppppppk..', '..kpPpppPpk.', '.kppppppppk.', '.kpPppppPpk.', '.kkkkkkkkkk.', '..kk....kk..'],PRP={k:'#2a1420',p:'#e86aa8',P:'#b83a7a',y:'#ffd23f',h:'#f2c84a',s:'#f0c8a0',e:'#2a1420'};
 ICON.prA=pixelSvg(PR,PRP);ICON.prB=pixelSvg(PR.map((r,i)=>i===15?"...kk..kk...":r),PRP);
@@ -1287,7 +1358,11 @@ const CRITTERS=(()=>{
     jungle:[()=>{const d=R(34,52);return{d,frac:.18,html:`<span class="crit parrot${Math.random()<.5?' rev':''}" style="top:${R(10,50)}%;--d:${d}s"><i class="fa">${ICON.parrotA}</i><i class="fb">${ICON.parrotB}</i></span>`}},
             ()=>{const d=R(40,56);return{d,frac:.36,html:`<span class="crit raptor" style="top:${R(62,72)}%;--d:${d}s"><i class="fa">${ICON.raptorA}</i><i class="fb">${ICON.raptorB}</i></span>`}}],
     mine:[()=>{const d=R(40,60);return{d,frac:.3,html:`<span class="crit cart" style="top:${R(64,74)}%;--d:${d}s"><i class="fa">${ICON.cartA}</i><i class="fb">${ICON.cartB}</i></span>`}}],
-    void:[()=>{const d=R(70,95);return{d,frac:.45,html:`<span class="crit horror" style="top:${R(15,55)}%;--d:${d}s"><i class="fa">${ICON.horrorA}</i><i class="fb">${ICON.horrorB}</i></span>`}}]
+    void:[()=>{const d=R(70,95);return{d,frac:.45,html:`<span class="crit horror" style="top:${R(15,55)}%;--d:${d}s"><i class="fa">${ICON.horrorA}</i><i class="fb">${ICON.horrorB}</i></span>`}}],
+    volcano:[()=>{const d=R(50,70);return{d,frac:.44,html:`<span class="crit salamander" style="top:${R(64,76)}%;--d:${d}s"><i class="fa">${ICON.salA}</i><i class="fb">${ICON.salB}</i></span>`}}],
+    frost:[()=>{const d=R(70,90);return{d,frac:.41,html:`<span class="crit penguin" style="top:${R(60,70)}%;--d:${d}s"><span class="wob"><i class="fa">${ICON.penA}</i><i class="fb">${ICON.penB}</i></span></span>`}}],
+    arcane:[()=>{const d=R(55,75);return{d,frac:.41,html:`<span class="crit spellbook" style="top:${R(18,55)}%;--d:${d}s"><i class="fa">${ICON.bookA}</i><i class="fb">${ICON.bookB}</i></span>`}}],
+    phyrexian:[()=>{const d=R(40,55);return{d,frac:.36,html:`<span class="crit mite" style="top:${R(62,74)}%;--d:${d}s"><i class="fa">${ICON.miteA}</i><i class="fb">${ICON.miteB}</i></span>`}}]
   };
 })();
 let critTimer=null,critEl=null;
@@ -1963,12 +2038,16 @@ function overlayFx(p){
   const th=S.theme;
   if(th==='fantasy'||!th)return `<div class="fx-layer fx-fresh front"><span class="clash l">${ICON.bigsword}</span><span class="clash r">${ICON.bigsword}</span><span class="spark">${ICON.spark}</span></div>`;
   if(th==='haunted')return `<div class="fx-layer fx-fresh">${[[-38,-30],[34,-34],[-44,6],[42,10],[-20,-44],[18,-46],[0,-40]].map(([x,y],k)=>`<span class="bat" style="--dx:${x}cqmin;--dy:${y}cqmin;animation-delay:${(0.2+k*0.07).toFixed(2)}s">${ICON.bat}</span>`).join('')}</div>`;
-  if(th==='volcano')return `<div class="fx-layer"><div class="lava"></div></div>`;
+  if(th==='volcano'){let sd=3;const rr=()=>(sd=(sd*9301+49297)%233280)/233280;
+    const bombs=[...Array(9)].map((_,k)=>`<i class="lbomb" style="--dx:${((k-4)*11+rr()*6).toFixed(1)}cqmin;--dy:${(-45-rr()*35).toFixed(1)}cqh;--s:${(.6+rr()*.8).toFixed(2)};animation-delay:${(.35+rr()*.35).toFixed(2)}s"></i>`).join('');
+    return `<div class="fx-layer fx-fresh"><div class="erupt"></div>${bombs}</div><div class="fx-layer"><div class="lava low"></div><div class="charred"></div>${[22,50,76].map((l,k)=>`<i class="smk" style="left:${l}%;animation-delay:${(1.2+k*1.1).toFixed(1)}s"></i>`).join('')}</div>`}
   if(th==='ocean')return `<div class="fx-layer fx-fresh"><div class="ship">${ICON.ship}</div></div>`;
   if(th==='desert')return `<div class="fx-layer fx-fresh"><div class="sandstorm"></div><div class="sandstorm s2"></div></div>`;
   if(th==='forest')return `<div class="fx-layer">${[6,22,40,58,74,90].map((l,k)=>`<span class="leaf" style="left:${l}%;animation-delay:${(k*0.7).toFixed(1)}s;filter:hue-rotate(${[0,-25,20,-10,30,-35][k]}deg)">${ICON.leaf}</span>`).join('')}</div>`;
-  if(th==='arcane')return `<div class="fx-layer fx-fresh"><div class="rune">${ICON.rune}</div></div>`;
-  if(th==='frost')return `<div class="fx-layer"><div class="ice"></div></div>`;
+  if(th==='arcane'){const sp=[0,1,2,3,4,5,6,7,8,9].map(k=>{const a=k/10*Math.PI*2,r=48;return `<i class="suck arc" style="--sx:${(Math.cos(a)*r).toFixed(1)}cqmin;--sy:${(Math.sin(a)*r).toFixed(1)}cqmin;animation-delay:${(.5+k%3*.12).toFixed(2)}s"></i>`}).join('');
+    return `<div class="fx-layer"><div class="portal"><i></i><b></b></div></div><div class="fx-layer fx-fresh"><div class="rune">${ICON.rune}</div>${sp}</div>`}
+  if(th==='frost'){const sh=[[0,0,'0 0,100% 0,60% 100%,0 70%',-30,-30,-40],[33,0,'0 0,100% 0,100% 80%,30% 100%',0,-40,25],[66,0,'20% 0,100% 0,100% 100%,0 60%',30,-30,40],[0,33,'0 20%,100% 0,80% 100%,0 100%',-40,0,-20],[33,33,'0 0,100% 30%,70% 100%,10% 80%',5,10,60],[66,33,'0 0,100% 10%,100% 100%,20% 90%',40,5,30],[0,66,'0 0,90% 10%,100% 100%,0 100%',-30,35,-35],[33,66,'10% 0,100% 20%,80% 100%,0 90%',0,40,20],[66,66,'0 10%,100% 0,100% 100%,30% 100%',30,35,45]];
+    return `<div class="fx-layer"><div class="ice late"></div>${cracksSvg()}</div><div class="fx-layer fx-fresh"><div class="frostin"></div>${sh.map(([x,y,cp,dx,dy,r])=>`<i class="shard" style="left:${x}%;top:${y}%;clip-path:polygon(${cp});--dx:${dx}cqmin;--dy:${dy}cqh;--r:${r}deg"></i>`).join('')}</div>`}
   if(th==='phyrexian')return `<div class="fx-layer">${veinsSvg(p.poison>=poisonLimit())}</div>`;
   // fixed-seed randomness so redraws produce identical markup (a change would cut the animation short)
   let sd=11;const rr=()=>(sd=(sd*9301+49297)%233280)/233280;
@@ -2007,7 +2086,7 @@ function renderFate(i){
   f.className='fate'+(mode?' '+mode:' hidden')+(settled?' settled':'')+(mode==='death'&&S.theme==='phyrexian'&&!p._confirm&&p.poison>=poisonLimit()?' compleated':'');
   f.innerHTML=html;
   // the reaper waits until the theme's death animation has played out
-  f.style.setProperty('--rd',(mode==='death'?({fantasy:1.9,space:1.25,ocean:2.8,haunted:2.1,volcano:1.5,forest:1.6,arcane:1.6,frost:1.1,desert:2.1,phyrexian:2.2,neon:1.6,celestial:2.0,jungle:2.0,mine:1.8,void:1.7}[S.theme||'fantasy']||.45):.45)+'s');
+  f.style.setProperty('--rd',(mode==='death'?({fantasy:1.9,space:1.25,ocean:2.8,haunted:2.1,volcano:1.8,forest:1.6,arcane:1.5,frost:2.1,desert:2.1,phyrexian:2.2,neon:1.6,celestial:2.0,jungle:2.0,mine:1.8,void:1.7}[S.theme||'fantasy']||.45):.45)+'s');
   if(mode==='death')p._fresh=false;
   if(mode==='victory')S._freshWin=false;
   f.onclick=e=>{
