@@ -667,8 +667,9 @@ body.intro #board .tile{animation:tileIn .5s cubic-bezier(.2,.8,.3,1) both}
 body.intro #board .tile:nth-child(2){animation-delay:.07s}body.intro #board .tile:nth-child(3){animation-delay:.14s}
 body.intro #board .tile:nth-child(4){animation-delay:.21s}body.intro #board .tile:nth-child(5){animation-delay:.28s}
 body.intro #board .tile:nth-child(6){animation-delay:.35s}body.intro #board .tile:nth-child(n+7){animation-delay:.42s}
-body.intro .menubtn,body.intro #menuBtn{animation:fadeIn .4s ease-out .5s both}
-@media (prefers-reduced-motion:reduce){#modal,#modal .sheet,#rollPop,#rollPop .rcard,.pcell.on,.pcell .panel,.howto,#welcome,#welcome .wscroll,#welcome .wcard>*,body.intro #board .tile,body.intro #menuBtn{animation:none!important}}
+body.intro #menuBtn,body.intro .qbtn{opacity:0;transition:none}
+#menuBtn,.qbtn{transition:transform .08s,opacity .35s}
+@media (prefers-reduced-motion:reduce){#modal,#modal .sheet,#rollPop,#rollPop .rcard,.pcell.on,.pcell .panel,.howto,#welcome,#welcome .wscroll,#welcome .wcard>*,body.intro #board .tile{animation:none!important}}
 </style>
 </head>
 <body>
@@ -755,7 +756,7 @@ body.intro .menubtn,body.intro #menuBtn{animation:fadeIn .4s ease-out .5s both}
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 25</div>
+    <div class="note fcp">Grim Tally · version 26</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -1167,6 +1168,8 @@ function render(){
 // the edges between seats and pick the clear one closest to the middle of the table.
 let placeQ=0;function schedulePlace(){if(placeQ)return;placeQ=requestAnimationFrame(()=>{placeQ=0;placeMenu()})}
 function placeMenu(){
+  // seats are mid-animation (scaled) during the opening intro, so measuring now would put the button off center
+  if(document.body.classList.contains('intro'))return;
   const tiles=[...board.querySelectorAll('.tile')];if(!tiles.length)return;
   const rs=tiles.map(t=>t.getBoundingClientRect());
   const L=Math.min(...rs.map(q=>q.left)),R=Math.max(...rs.map(q=>q.right));
@@ -1906,7 +1909,7 @@ function openWelcome(){
 }
 function closeWelcome(){S.welcomed=true;save();document.getElementById('welcome').classList.add('hidden');playIntro()}
 // the table's seats pop in one after another when the app opens
-function playIntro(){const b=document.body;b.classList.remove('intro');void b.offsetWidth;b.classList.add('intro');clearTimeout(playIntro.t);playIntro.t=setTimeout(()=>b.classList.remove('intro'),1400)}
+function playIntro(){const b=document.body;b.classList.remove('intro');void b.offsetWidth;b.classList.add('intro');clearTimeout(playIntro.t);playIntro.t=setTimeout(()=>{b.classList.remove('intro');schedulePlace()},1000)}
 function drawWelcome(){
   const wl=document.getElementById('welcome');if(wl.dataset.drawn==='1')wl.classList.add('stepped');wl.dataset.drawn='1';
   const c=document.getElementById('wcard'),st=WZ.step;
@@ -1998,7 +2001,7 @@ cardQ.addEventListener('input',()=>{
 });
 cardQ.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();cardQ.blur()}});
 window.addEventListener('resize',()=>{layoutInner();placeMenu();layoutHost()});
-try{document.fonts.ready.then(()=>board.querySelectorAll('.tile').forEach(t=>t._fit&&t._fit()))}catch(e){}
+try{document.fonts.ready.then(()=>{board.querySelectorAll('.tile').forEach(t=>t._fit&&t._fit());schedulePlace()})}catch(e){}
 window.addEventListener('orientationchange',()=>setTimeout(()=>{layoutInner();placeMenu()},200));
 // Keep the screen awake where allowed
 document.addEventListener('pointerdown',async function wl(){
@@ -2024,7 +2027,7 @@ function applyTheme(name,rerender){
   seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{applyTheme(b.dataset.theme,true);save()}));
   if(rerender){render();refreshTable()}
   startCritters();
-  try{document.fonts.ready.then(()=>board.querySelectorAll('.tile').forEach(t=>t._fit&&t._fit()))}catch(e){}
+  try{document.fonts.ready.then(()=>{board.querySelectorAll('.tile').forEach(t=>t._fit&&t._fit());schedulePlace()})}catch(e){}
 }
 document.querySelectorAll('[data-icon]').forEach(el=>{el.outerHTML=ICON[el.dataset.icon]});
 applyTheme(S.theme||'fantasy',false);
