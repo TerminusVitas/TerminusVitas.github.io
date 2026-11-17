@@ -670,6 +670,11 @@ body.intro #board .tile:nth-child(6){animation-delay:.35s}body.intro #board .til
 body.intro #menuBtn,body.intro .qbtn{opacity:0;transition:none}
 #menuBtn,.qbtn{transition:transform .08s,opacity .35s}
 @media (prefers-reduced-motion:reduce){#modal,#modal .sheet,#rollPop,#rollPop .rcard,.pcell.on,.pcell .panel,.howto,#welcome,#welcome .wscroll,#welcome .wcard>*,body.intro #board .tile{animation:none!important}}
+.vrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.vlab{font:700 15px var(--font);color:var(--text)}
+input.vol{-webkit-appearance:none;appearance:none;flex:1 1 150px;max-width:260px;height:12px;background:var(--well);border:3px solid var(--line);outline:0;margin:6px 0}
+input.vol::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;background:var(--accent);border:3px solid var(--line);box-shadow:0 2px 0 rgba(0,0,0,.4)}
+input.vol::-moz-range-thumb{width:16px;height:16px;border-radius:0;background:var(--accent);border:3px solid var(--line)}
 </style>
 </head>
 <body>
@@ -730,7 +735,10 @@ body.intro #menuBtn,body.intro .qbtn{opacity:0;transition:none}
       <div class="seg" id="dnSeg"><button data-dn="off">Off</button><button data-dn="day">Day</button><button data-dn="night">Night</button></div>
     </div>
     <div class="row"><span data-ribbon>Sound</span>
-      <div class="seg" id="sndSeg"><button data-snd="on">On</button><button data-snd="off">Off</button></div>
+      <div class="vrow"><span class="vlab">Effects</span><div class="seg" id="sndSeg"><button data-snd="on">On</button><button data-snd="off">Off</button></div></div>
+      <div class="vrow"><span class="vlab">Effects volume</span><input type="range" class="vol" id="sfxVol" min="0" max="100" step="1"></div>
+      <div class="vrow"><span class="vlab">Music</span><div class="seg" id="musSeg"><button data-mus="on">On</button><button data-mus="off">Off</button></div></div>
+      <div class="vrow"><span class="vlab">Music volume</span><input type="range" class="vol" id="musVol" min="0" max="100" step="1"></div>
     </div>
     <div class="row"><span data-ribbon>Themes</span>
       <div class="theme-opts" id="themeSeg"></div>
@@ -756,7 +764,7 @@ body.intro #menuBtn,body.intro .qbtn{opacity:0;transition:none}
       <a class="coffee" href="https://buymeacoffee.com/DANDECO" target="_blank" rel="noopener"><i data-icon="coffee"></i> Buy me a coffee</a>
       <div class="note">Enjoying the counter? Support the team! buymeacoffee.com/DANDECO</div>
     </div>
-    <div class="note fcp">Grim Tally · version 26</div>
+    <div class="note fcp">Grim Tally · version 27</div>
     <div class="note fcp">Grim Tally is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
     <button data-a="close" class="primary">Done</button>
   </div>
@@ -952,7 +960,7 @@ if(!S||!Array.isArray(S.players))S={count:4,start:40,layout:'table',players:[]};
 // table-wide state (added later; fill defaults for older saves)
 S.turn=S.turn??null;S.firstTurn=S.firstTurn??null;S.round=S.round||0;S.turnStart=S.turnStart||0;
 S.gameStart=S.gameStart||Date.now();S.monarch=S.monarch??null;S.initiative=S.initiative??null;
-S.dayNight=S.dayNight||'off';S.showTurn=S.showTurn!==false;S.showUndo=S.showUndo!==false;S.sound=S.sound!==false;S.teams=!!S.teams;
+S.dayNight=S.dayNight||'off';S.showTurn=S.showTurn!==false;S.showUndo=S.showUndo!==false;S.sound=S.sound!==false;S.music=!!S.music;if(S.sfxVol==null)S.sfxVol=.8;if(S.musicVol==null)S.musicVol=.5;S.teams=!!S.teams;
 if(!Array.isArray(S.winners))S.winners=(S.winner!=null?[S.winner]:[]);
 
 // ---------- Undo ----------
@@ -984,8 +992,7 @@ let AC=null,lastSfx=0;
 function sfx(kind){
   if(!S.sound)return;
   try{
-    if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
-    if(AC.state==='suspended')AC.resume();
+    ensureAC();
     const now=AC.currentTime;
     if((kind==='up'||kind==='down')&&performance.now()-lastSfx<45)return;
     lastSfx=performance.now();
@@ -996,11 +1003,76 @@ function sfx(kind){
       const o=AC.createOscillator(),g=AC.createGain();
       o.type=kind==='death'?'triangle':'square';o.frequency.value=f;
       g.gain.setValueAtTime(.06,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
-      o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02);t+=d*.9;
+      o.connect(g);g.connect(sfxBus);o.start(t);o.stop(t+d+.02);t+=d*.9;
     });
   }catch(e){}
 }
-document.addEventListener('pointerdown',()=>{try{if(S.sound&&!AC){AC=new (window.AudioContext||window.webkitAudioContext)()}if(AC&&AC.state==='suspended')AC.resume()}catch(e){}},{once:true});
+// browsers only allow sound after the first tap, so music starts then
+document.addEventListener('pointerdown',()=>{try{if(S.sound||S.music)ensureAC();startMusic()}catch(e){}},{once:true});
+// ---- Music: a little chiptune per theme, made on the fly with the Web Audio synth ----
+const TUNES={"fantasy":{"bpm":112,"lead":"square","bass":"triangle","A":{"m":["D5 - A4 - B4 C#5 D5 -","E5 - D5 C#5 B4 - A4 -","G4 - B4 - D5 - G5 -","F#5 - E5 D5 E5 - - -"],"b":["D3 - - - A2 - - -","G2 - - - A2 - - -","G2 - - - D3 - - -","A2 - - - A2 - - -"]},"B":{"m":["F#5 - G5 - A5 - F#5 -","E5 - D5 - E5 - - -","D5 - B4 - G4 - B4 D5","C#5 - A4 - D5 - - -"],"b":["B2 - - - G2 - - -","A2 - - - A2 - - -","G2 - - - G2 - - -","A2 - - - D3 - - -"]}},"space":{"bpm":118,"lead":"square","bass":"sawtooth","drums":"h.h.h.h.","arp":[["A3","C4","E4","A4"],["F3","A3","C4","F4"],["C4","E4","G4","C5"],["G3","B3","D4","G4"]],"A":{"m":["E5 - - - - - D5 -","C5 - - - A4 - - -","G4 - - - C5 - E5 -","D5 - - - - - - -"],"b":["A2 - - - - - - -","F2 - - - - - - -","C3 - - - - - - -","G2 - - - - - - -"]},"B":{"m":["A5 - G5 - E5 - - -","F5 - E5 - C5 - - -","E5 - D5 - C5 - G4 -","B4 - - - D5 - - -"],"b":["A2 - - - - - - -","F2 - - - - - - -","C3 - - - - - - -","G2 - - - - - - -"]}},"ocean":{"bpm":100,"lead":"triangle","bass":"triangle","A":{"m":["D4 - G4 - G4 - A4 B4","C5 - B4 - A4 - G4 -","E4 - A4 - A4 - B4 C5","D5 - C5 - B4 - A4 -"],"b":["G2 - - - G2 - - -","C3 - - - G2 - - -","A2 - - - A2 - - -","D3 - - - D3 - - -"]},"B":{"m":["G4 - B4 - D5 - - -","E5 - D5 - B4 - - -","C5 - A4 - F#4 - A4 -","G4 - - - - - - -"],"b":["G2 - - - G2 - - -","C3 - - - G2 - - -","D3 - - - D3 - - -","G2 - - - G2 - - -"]}},"haunted":{"bpm":84,"lead":"sine","bass":"triangle","A":{"m":["A5 - D6 - F6 - E6 -","D6 - C#6 - D6 - - -","A5 - D6 - F6 - G6 -","A6 - G6 - F6 - E6 -"],"b":["D3 - - - A2 - - -","D3 - - - A2 - - -","D3 - - - Bb2 - - -","A2 - - - A2 - - -"]},"B":{"m":["F6 - E6 - D6 - A5 -","Bb5 - - - A5 - - -","G5 - Bb5 - D6 - F6 -","E6 - - - C#6 - - -"],"b":["Bb2 - - - Bb2 - - -","G2 - - - D3 - - -","G2 - - - G2 - - -","A2 - - - A2 - - -"]}},"volcano":{"bpm":138,"lead":"square","bass":"sawtooth","drums":"k.h.s.h.","A":{"m":["E4 - E4 F4 E4 - G4 -","F4 - E4 - D4 - E4 -","E4 - E4 F4 G4 - A4 -","B4 - A4 - G4 - F4 -"],"b":["E2 E2 E2 E2 E2 E2 E2 E2","F2 F2 F2 F2 E2 E2 E2 E2","E2 E2 E2 E2 E2 E2 E2 E2","G2 G2 G2 G2 F2 F2 F2 F2"]},"B":{"m":["E5 - - - D5 - C5 -","B4 - C5 - B4 - A4 -","G4 - A4 - B4 - C5 -","B4 - - - - - - -"],"b":["C3 C3 C3 C3 C3 C3 C3 C3","G2 G2 G2 G2 A2 A2 A2 A2","E2 E2 E2 E2 E2 E2 E2 E2","B2 B2 B2 B2 B2 B2 B2 B2"]}},"forest":{"bpm":96,"lead":"triangle","bass":"triangle","A":{"m":["C5 - A4 - F4 - A4 -","C5 - D5 - C5 - - -","Bb4 - G4 - E4 - G4 -","A4 - - - - - - -"],"b":["F2 - - - C3 - - -","F2 - - - F2 - - -","C3 - - - C3 - - -","F2 - - - F2 - - -"]},"B":{"m":["F5 - E5 - D5 - C5 -","D5 - C5 - A4 - - -","Bb4 - A4 - G4 - E4 -","F4 - - - - - - -"],"b":["Bb2 - - - F2 - - -","Bb2 - - - F2 - - -","C3 - - - C3 - - -","F2 - - - F2 - - -"]}},"arcane":{"bpm":100,"lead":"sine","bass":"triangle","arp":[["C4","E4","G4","B4"],["D4","F#4","A4","D5"],["E4","G4","B4","E5"],["D4","F#4","A4","D5"]],"A":{"m":["G5 - - - B5 - - -","A5 - - - F#5 - - -","G5 - - - E5 - B4 -","D5 - - - - - - -"],"b":["C3 - - - - - - -","D3 - - - - - - -","E3 - - - - - - -","D3 - - - - - - -"]},"B":{"m":["E5 - F#5 - G5 - B5 -","A5 - - - D5 - - -","B5 - A5 - G5 - E5 -","F#5 - - - - - - -"],"b":["C3 - - - - - - -","D3 - - - - - - -","E3 - - - - - - -","D3 - - - - - - -"]}},"frost":{"bpm":76,"lead":"sine","bass":"sine","arp":[["E4","G4","B4","E5"],["C4","E4","G4","C5"],["G3","B3","D4","G4"],["D4","F#4","A4","D5"]],"A":{"m":["B5 - - - - - G5 -","E5 - - - - - - -","D5 - - - G5 - - -","F#5 - - - - - - -"],"b":["E2 - - - - - - -","C3 - - - - - - -","G2 - - - - - - -","D3 - - - - - - -"]},"B":{"m":["E6 - - - D6 - B5 -","C6 - - - G5 - - -","B5 - A5 - G5 - D5 -","F#5 - - - - - - -"],"b":["E2 - - - - - - -","C3 - - - - - - -","G2 - - - - - - -","D3 - - - - - - -"]}},"desert":{"bpm":104,"lead":"sawtooth","bass":"triangle","drums":"k..k..s.","A":{"m":["D5 - Eb5 - F#5 - G5 -","A5 - G5 F#5 G5 - - -","F#5 - Eb5 - D5 - Eb5 -","F#5 Eb5 D5 - - - - -"],"b":["D2 - - - A2 - - -","D2 - - - A2 - - -","D2 - - - A2 - - -","D2 - - - D2 - - -"]},"B":{"m":["A5 - Bb5 - A5 - G5 -","F#5 - G5 - A5 - - -","G5 - F#5 - Eb5 - F#5 -","D5 - - - - - - -"],"b":["G2 - - - D2 - - -","D2 - - - A2 - - -","G2 - - - Eb2 - - -","D2 - - - D2 - - -"]}},"phyrexian":{"bpm":112,"lead":"square","bass":"sawtooth","drums":"k.hsk.hs","A":{"m":["C4 - C4 - Db4 - C4 -","G3 - - - Ab3 - G3 -","C4 - Eb4 - D4 - Db4 -","C4 - - - - - - -"],"b":["C2 C2 C2 C2 C2 C2 C2 C2","Db2 Db2 Db2 Db2 C2 C2 C2 C2","C2 C2 C2 C2 C2 C2 C2 C2","G1 G1 G1 G1 C2 C2 C2 C2"]},"B":{"m":["G4 - Ab4 - G4 - F4 -","Eb4 - F4 - Db4 - - -","C4 - Db4 - Eb4 - F#4 -","G4 - - - - - - -"],"b":["Ab1 Ab1 Ab1 Ab1 Ab1 Ab1 Ab1 Ab1","Db2 Db2 Db2 Db2 Db2 Db2 Db2 Db2","C2 C2 C2 C2 C2 C2 C2 C2","G1 G1 G1 G1 G1 G1 G1 G1"]}}};
+let sfxBus=null,musBus=null,noiseBuf=null;
+function ensureAC(){
+  if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(!sfxBus){sfxBus=AC.createGain();sfxBus.connect(AC.destination);musBus=AC.createGain();musBus.connect(AC.destination);applyVolumes()}
+  if(AC.state==='suspended')AC.resume();
+  return AC;
+}
+function applyVolumes(){
+  if(!sfxBus)return;
+  sfxBus.gain.value=S.sfxVol*1.4;
+  musBus.gain.value=S.musicVol*S.musicVol*2.2;
+}
+function noteHz(n){const m=/^([A-G])(#|b)?(-?\d)$/.exec(n);if(!m)return 0;
+  const st={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]]+(m[2]==='#'?1:m[2]==='b'?-1:0)+(+m[3]+1)*12;return 440*Math.pow(2,(st-69)/12)}
+// lay the tune out as one long list of eighth-note steps: A B A B, then 8 quiet bars
+function buildSong(t){
+  const order=['A','B','A','B',null,null],steps=[];
+  order.forEach(sec=>{for(let bar=0;bar<4;bar++){
+    const m=sec?t[sec].m[bar].split(' '):Array(8).fill('.'),b=sec?t[sec].b[bar].split(' '):Array(8).fill('.');
+    for(let k=0;k<8;k++)steps.push({m:m[k],b:b[k],arp:sec&&t.arp?t.arp[bar]:null,dr:sec&&t.drums?t.drums[k]:'.'})}});
+  const hold=(i,key)=>{let n=1;while(steps[i+n]&&steps[i+n][key]==='-')n++;return n};
+  steps.forEach((s,i)=>{s.ml=hold(i,'m');s.bl=hold(i,'b')});
+  return steps;
+}
+function tone(type,f,t,d,vol){
+  const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.012);
+  g.gain.setValueAtTime(vol*.75,t+Math.min(.08,d*.4));g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(musBus);o.start(t);o.stop(t+d+.05);
+}
+function drum(kind,t){
+  if(kind==='k'){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(40,t+.12);
+    g.gain.setValueAtTime(.22,t);g.gain.exponentialRampToValueAtTime(.0001,t+.15);o.connect(g);g.connect(musBus);o.start(t);o.stop(t+.2);return}
+  if(!noiseBuf){noiseBuf=AC.createBuffer(1,AC.sampleRate*.3,AC.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+  const n=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();n.buffer=noiseBuf;
+  f.type='highpass';f.frequency.value=kind==='s'?1200:7000;const len=kind==='s'?.13:.04;
+  g.gain.setValueAtTime(kind==='s'?.09:.035,t);g.gain.exponentialRampToValueAtTime(.0001,t+len);
+  n.connect(f);f.connect(g);g.connect(musBus);n.start(t);n.stop(t+len+.02);
+}
+const MUS={timer:null,steps:null,i:0,next:0,theme:null};
+function musicTick(){
+  const t=TUNES[S.theme||'fantasy']||TUNES.fantasy,e=60/t.bpm/2;
+  while(MUS.next<AC.currentTime+.3){
+    const s=MUS.steps[MUS.i],at=MUS.next;
+    if(s.m&&s.m!=='-'&&s.m!=='.')tone(t.lead,noteHz(s.m),at,s.ml*e*.95,t.lead==='square'||t.lead==='sawtooth'?.045:.09);
+    if(s.b&&s.b!=='-'&&s.b!=='.')tone(t.bass,noteHz(s.b),at,s.bl*e*.95,t.bass==='sawtooth'?.04:.09);
+    if(s.arp){const ch=s.arp,k=(MUS.i%8)*2;[0,1].forEach(h=>tone('triangle',noteHz(ch[(k+h)%ch.length])*2,at+h*e/2,e/2*.9,.028))}
+    if(s.dr&&s.dr!=='.')drum(s.dr,at);
+    MUS.next+=e;MUS.i=(MUS.i+1)%MUS.steps.length;
+  }
+}
+function startMusic(){
+  if(!S.music||document.hidden)return;
+  try{ensureAC()}catch(e){return}
+  const th=S.theme||'fantasy';
+  if(MUS.timer&&MUS.theme===th)return;
+  stopMusic();MUS.theme=th;MUS.steps=buildSong(TUNES[th]||TUNES.fantasy);MUS.i=0;MUS.next=AC.currentTime+.15;
+  MUS.timer=setInterval(musicTick,60);musicTick();
+}
+function stopMusic(){clearInterval(MUS.timer);MUS.timer=null}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMusic();else startMusic()});
+
 
 function mkPlayer(i){return{name:'Player '+(i+1),life:S.start,poison:0,cmd:{},colors:[COLORS[i%COLORS.length]],img:null}}
 const MANA={W:'#bfa45a',U:'#2560a0',B:'#3b2a45',R:'#b0302a',G:'#2f7d43',C:'#7c7c86'};
@@ -1777,6 +1849,8 @@ function refreshModal(){
   document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on',(b.dataset.mode==='2hg')===S.teams));
   document.querySelectorAll('#dnSeg button').forEach(b=>b.classList.toggle('on',b.dataset.dn===S.dayNight));
   document.querySelectorAll('#sndSeg button').forEach(b=>b.classList.toggle('on',(b.dataset.snd==='on')===S.sound));
+  document.querySelectorAll('#musSeg button').forEach(b=>b.classList.toggle('on',(b.dataset.mus==='on')===S.music));
+  document.getElementById('sfxVol').value=Math.round(S.sfxVol*100);document.getElementById('musVol').value=Math.round(S.musicVol*100);
   document.getElementById('stats').innerHTML=statsHtml();
   document.querySelectorAll('.qbtog').forEach(b=>{const on=!!S[b.dataset.qb];b.classList.toggle('on',on);b.textContent=on?'On':'Off'});
   document.getElementById('plCount').textContent=S.count;
@@ -1824,6 +1898,11 @@ document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('clic
 }));
 document.querySelectorAll('#dnSeg button').forEach(b=>b.addEventListener('click',()=>{mark(true);S.dayNight=b.dataset.dn;refreshTable();refreshModal();save()}));
 document.querySelectorAll('#sndSeg button').forEach(b=>b.addEventListener('click',()=>{S.sound=b.dataset.snd==='on';refreshModal();save();sfx('mark')}));
+document.querySelectorAll('#musSeg button').forEach(b=>b.addEventListener('click',()=>{S.music=b.dataset.mus==='on';refreshModal();save();if(S.music)startMusic();else stopMusic()}));
+document.getElementById('sfxVol').addEventListener('input',e=>{S.sfxVol=e.target.value/100;applyVolumes()});
+document.getElementById('sfxVol').addEventListener('change',()=>{save();sfx('mark')});
+document.getElementById('musVol').addEventListener('input',e=>{S.musicVol=e.target.value/100;applyVolumes()});
+document.getElementById('musVol').addEventListener('change',()=>save());
 const clearHist=document.getElementById('clearHist');let hArmed=false,hT=null;
 clearHist.addEventListener('click',()=>{
   if(!hArmed){hArmed=true;clearHist.classList.add('confirm');clearHist.textContent='Tap again to clear';hT=setTimeout(()=>{hArmed=false;clearHist.classList.remove('confirm');clearHist.textContent='Clear history'},3000);return}
@@ -2027,6 +2106,7 @@ function applyTheme(name,rerender){
   seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{applyTheme(b.dataset.theme,true);save()}));
   if(rerender){render();refreshTable()}
   startCritters();
+  if(MUS.timer)startMusic();  // swap to the new theme's tune
   try{document.fonts.ready.then(()=>{board.querySelectorAll('.tile').forEach(t=>t._fit&&t._fit());schedulePlace()})}catch(e){}
 }
 document.querySelectorAll('[data-icon]').forEach(el=>{el.outerHTML=ICON[el.dataset.icon]});
